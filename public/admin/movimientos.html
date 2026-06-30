@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movimientos — TIC & Stock</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>TIC & Stock</h1>
+    <nav>
+      <a href="/admin/inventario.html">Inventario</a>
+      <a href="/admin/movimientos.html" class="active">Movimientos</a>
+      <a href="/admin/alertas.html">Alertas</a>
+      <a href="#" id="logoutBtn">Cerrar sesión</a>
+    </nav>
+  </header>
+  <main>
+    <h2 style="margin-bottom:16px;">Historial de Movimientos</h2>
+    <div class="filters">
+      <select id="tipoFilter" onchange="cargarMovimientos()">
+        <option value="">Todos los tipos</option>
+        <option value="retiro">Retiros</option>
+        <option value="devolucion">Devoluciones</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="ID de ítem..." oninput="cargarMovimientos()">
+    </div>
+    <div id="loading" class="loading"><div class="spinner"></div></div>
+    <div id="tableContainer"></div>
+  </main>
+  <script src="/js/admin-movimientos.js"></script>
+</body>
+</html>
