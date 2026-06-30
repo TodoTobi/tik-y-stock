@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventario — TIC & Stock</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>TIC & Stock</h1>
+    <nav>
+      <a href="/admin/inventario.html" class="active">Inventario</a>
+      <a href="/admin/movimientos.html">Movimientos</a>
+      <a href="/admin/alertas.html">Alertas</a>
+      <a href="#" id="logoutBtn">Cerrar sesión</a>
+    </nav>
+  </header>
+  <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2>Inventario</h2>
+      <button class="btn btn-primary" onclick="abrirModal()">+ Nuevo ítem</button>
+    </div>
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="Buscar nombre o código..." oninput="cargarItems()">
+      <select id="categoriaFilter" onchange="cargarItems()"><option value="">Todas las categorías</option></select>
+      <select id="estadoFilter" onchange="cargarItems()">
+        <option value="">Todos los estados</option>
+        <option value="disponible">Disponible</option>
+        <option value="en_uso">En uso</option>
+        <option value="dañado">Dañado</option>
+        <option value="de_baja">De baja</option>
+      </select>
+    </div>
+    <div id="loading" class="loading"><div class="spinner"></div></div>
+    <div id="tableContainer"></div>
+  </main>
+
+  <div class="modal" id="itemModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Nuevo ítem</h2>
+      <form id="itemForm">
+        <input type="hidden" id="itemId">
+        <div class="form-group"><label>Nombre</label><input type="text" id="nombre" required></div>
+        <div class="form-group"><label>Categoría</label><input type="text" id="categoria" required></div>
+        <div class="form-group"><label>Cantidad</label><input type="number" id="cantidad" min="0" value="1"></div>
+        <div class="form-group"><label>Código escaneable</label><input type="text" id="codigo_escaneable" required></div>
+        <div class="form-group"><label>Ubicación</label><input type="text" id="ubicacion"></div>
+        <div class="form-group"><label>Estado</label>
+          <select id="estado">
+            <option value="disponible">Disponible</option>
+            <option value="en_uso">En uso</option>
+            <option value="dañado">Dañado</option>
+            <option value="de_baja">De baja</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Observaciones</label><textarea id="observaciones" rows="3"></textarea></div>
+        <div class="form-group"><label>Foto</label><input type="file" id="foto" accept="image/jpeg,image/png,image/webp"></div>
+        <div id="formError" class="error-msg" style="display:none;color:#dc2626;font-size:14px;margin-bottom:8px;"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/admin-inventario.js"></script>
+</body>
+</html>
