@@ -27,8 +27,7 @@
 | **HTML** | HTML5 semántico | Estructura de páginas |
 | **CSS** | CSS3 vanilla | Estilo visual propio, paleta industrial/taller |
 | **JavaScript** | JS vanilla (ES6+) | Interactividad, fetch API, manipulación DOM |
-| **Escaneo QR/Barras** | html5-qrcode (vía CDN) | Lectura de códigos desde cámara del dispositivo |
-| **Generación QR** | qrcode (npm) | Generación de etiquetas imprimibles desde Node.js |
+| **Escaneo QR/Barras** | html5-qrcode (archivo local en `/public/vendor/`) | Lectura de códigos desde cámara del dispositivo (sin dependencia de internet) |
 
 ### Herramientas de Desarrollo
 

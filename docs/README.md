@@ -18,7 +18,7 @@ Sistema web de inventario con **consulta en tiempo real**, **escaneo QR/código 
 | Base de datos | MySQL (mysql2 con promesas) | Gratuito, conocido, consultas parametrizadas |
 | Frontend | HTML5 + CSS3 + JavaScript vanilla | Sin build step, sin framework, servido por Express |
 | Autenticación | express-session + bcrypt | Sesiones server-side sin JWT, simple y segura |
-| Escaneo | html5-qrcode (CDN) | QR + código de barras desde cámara, 100% client-side |
+| Escaneo | html5-qrcode (local /public/vendor/) | QR + código de barras desde cámara, sin dependencia de internet |
 | Imágenes | multer | Subida de fotos a /public/uploads |
 
 ## Arquitectura
@@ -29,17 +29,16 @@ Monolito en 3 capas (Presentación → Lógica → Datos) con Express sirviendo 
 
 | Rol | Permisos |
 |---|---|
-| **superusuario** | CRUD inventario, historial movimientos, dashboard, alertas, gestión de usuarios |
+| **superusuario** | CRUD inventario, historial movimientos, alertas |
 | **usuario** (alumno) | Catálogo, escaneo QR, retiro/devolución, mis préstamos activos |
 
 ## Enlaces del sistema
 
 - `http://localhost:3000/login.html` — Login
 - `http://localhost:3000/registro.html` — Registro
-- `http://localhost:3000/admin/dashboard.html` — Dashboard (superusuario)
+- `http://localhost:3000/admin/movimientos.html` — Panel principal (superusuario, redirige desde /admin)
 - `http://localhost:3000/admin/inventario.html` — Gestión inventario (superusuario)
 - `http://localhost:3000/admin/movimientos.html` — Historial movimientos (superusuario)
 - `http://localhost:3000/usuario/catalogo.html` — Catálogo (usuario)
 - `http://localhost:3000/usuario/escaneo.html` — Escaneo QR (usuario)
 - `http://localhost:3000/usuario/prestamos.html` — Mis préstamos (usuario)
-- `http://localhost:3000/institucional.html` — Página institucional

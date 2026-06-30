@@ -21,6 +21,7 @@
 - Comparación con bcrypt.compare
 - Sesión almacena: `{ id, nombre, rol }` (nunca la contraseña)
 - Cookie de sesión con httpOnly, sameSite, maxAge de 30 min de inactividad
+- **⚠️ HTTP vs HTTPS trade-off**: El sistema corre sobre HTTP en la red local. La cookie viaja en texto plano. Esto es aceptable para el alcance del PMV (red cerrada del taller, sin tránsito por internet). No se implementa `secure: true` porque no hay HTTPS. Si en el futuro el sistema se expone fuera de la red local, migrar a HTTPS con mkcert o Let's Encrypt es requisito previo.
 
 ### Sesión
 - express-session con secret en `.env`
@@ -35,7 +36,7 @@
 ### Roles
 | Rol | Acceso |
 |---|---|
-| `superusuario` | CRUD items, todos los movimientos, alertas, dashboard |
+| `superusuario` | CRUD items, todos los movimientos, alertas |
 | `usuario` | Catálogo, escaneo, retiro/devolución, sus préstamos |
 
 ### Middleware requireRole
@@ -58,7 +59,7 @@ function requireRole(rol) {
 | DELETE /api/items/:id | requireAuth + requireRole('superusuario') |
 | GET /api/movimientos | requireAuth + requireRole('superusuario') |
 | GET /api/alertas | requireAuth + requireRole('superusuario') |
-| GET /api/dashboard/* | requireAuth + requireRole('superusuario') |
+| GET /api/alertas/contador | (no existe — contador calculado en frontend) |
 | POST /api/movimientos/retiro | requireAuth |
 | POST /api/movimientos/devolucion | requireAuth |
 | GET /api/movimientos/mis-prestamos | requireAuth |

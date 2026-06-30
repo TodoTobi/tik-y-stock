@@ -4,7 +4,7 @@
 
 - **Paleta**: grises oscuros (#2d2d2d, #f5f5f5) con acento azul (#2563eb) o naranja (#ea580c)
 - **Tipografía**: sans-serif del sistema
-- **Sin librerías externas de CSS ni JS frameworks**
+- **Sin frameworks JS ni librerías de UI** (html5-qrcode es la única excepción, servida desde `/public/vendor/`)
 - **Mobile-friendly básico** (uso principal en escritorio del taller)
 - **Tiempo de uso**: cualquier función alcanzable en ≤ 2 clics, cualquier consulta resuelta en ≤ 30 segundos
 
@@ -13,18 +13,18 @@
 ```
 login.html
   │
-  ├── [superusuario] → /admin/dashboard.html
+  ├── [superusuario] → /admin/movimientos.html
   │                        │
   │                        ├── /admin/inventario.html (CRUD items)
   │                        ├── /admin/movimientos.html (historial + registro manual)
-  │                        └── (alertas en sidebar → modal/panel en dashboard)
+  │                        └── (alertas en sidebar)
   │
   └── [usuario] → /usuario/catalogo.html
                        │
                        ├── /usuario/escaneo.html (QR/código + retiro/devolución)
                        └── /usuario/prestamos.html (mis préstamos activos)
 
-Footer común: /institucional.html
+Footer común: (sin página institucional en PMV — ver BACKLOG_FUTURO)
 ```
 
 ## Sidebar de Navegación
@@ -33,7 +33,7 @@ Footer común: /institucional.html
 
 | Icono | Enlace | Descripción |
 |---|---|---|
-| 📊 | Dashboard | Resumen ejecutivo |
+| 📊 | Dashboard | Redirige a Movimientos (F9 en backlog) |
 | 📦 | Inventario | CRUD de items |
 | 🔄 | Movimientos | Historial + registro manual |
 | ⚠️ | Alertas | Alertas vencidas (badge con contador) |
@@ -68,13 +68,12 @@ Archivo principal de estilo (definir en cada HTML vía `<link>`).
 |---|---|
 | `login.html` | Formulario email + password, redirección por rol |
 | `registro.html` | Formulario nombre + email + password + confirmar |
-| `admin/dashboard.html` | 4 cards (total items, disponibles, movs hoy, alertas) + listas últimas alertas/últimos movs |
 | `admin/inventario.html` | Tabla con filtros + modal ABM con foto |
 | `admin/movimientos.html` | Tabla historial con filtros + formulario registro manual |
 | `usuario/catalogo.html` | Grid de tarjetas con foto, badge estado, modal detalle |
 | `usuario/escaneo.html` | Visor de cámara + input manual alternativo + botones confirmación |
 | `usuario/prestamos.html` | Lista de préstamos activos con botón "solicitar devolución" |
-| `institucional.html` | Página estática: descripción del proyecto, equipo, escuela |
+| (*opcional*) `institucional.html` | Página estática (en BACKLOG_FUTURO, solo si sobra tiempo) |
 
 ## Comportamientos Clave (JS transversal)
 
@@ -110,14 +109,10 @@ Archivo principal de estilo (definir en cada HTML vía `<link>`).
 - Fetch `GET /api/movimientos/mis-prestamos`
 - Lista + botón "Devolver" → POST devolución
 
-### admin-dashboard.js
-- Fetch `GET /api/dashboard/resumen`
-- Renderizar cards + listas
-
 ## Consideraciones de UX para la Demo
 
 1. La pantalla de **escaneo** es la estrella — debe dar feedback instantáneo y visible
 2. El **catálogo** debe resolverse en < 5 segundos: "¿está disponible el kit?"
-3. El **dashboard** debe mostrar números reales desde el seed, no ceros
+3. El **historial de movimientos** debe mostrar datos reales desde el seed, no vacío
 4. **Estados de carga** (spinner) en todas las pantallas que hacen fetch
 5. **Botones deshabilitados** durante envío de formularios

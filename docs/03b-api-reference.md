@@ -20,7 +20,7 @@ Inicia sesión.
 
 **Body**: `{ email, password }`  
 **Response 200**: `{ success: true, data: { rol } }`  
-El frontend redirige según rol: `superusuario` → `/admin/dashboard.html`, `usuario` → `/usuario/catalogo.html`
+El frontend redirige según rol: `superusuario` → `/admin/movimientos.html`, `usuario` → `/usuario/catalogo.html`
 
 ### `POST /api/auth/logout`
 
@@ -90,7 +90,11 @@ Registra un retiro. **Transaccional**.
 
 Registra una devolución. **Transaccional**.
 
-**Body**: `{ id_movimiento }` o `{ id_item }` (resuelve el último retiro abierto del usuario)  
+**Body**: `{ id_movimiento }` o `{ id_item }`  
+**Validaciones**: 
+- Si se pasa `id_movimiento`, verifica que pertenezca al usuario en sesión (ownership check). Si no coincide → 403.
+- Si se pasa `id_item`, resuelve el último retiro abierto del usuario en sesión para ese ítem. Si no hay retiro abierto → 400.
+- Si no se encuentra el movimiento → 404.  
 **Response 200**: `{ success: true, data: { id_movimiento, ... } }`
 
 ### `GET /api/movimientos` (requireRole superusuario)
@@ -120,27 +124,6 @@ Devuelve movimientos tipo retiro con devuelto=false y fecha_hora > 7 días (calc
 Marca el movimiento como devuelto (reutiliza lógica de devolución).  
 **Response 200**: `{ success: true, message: "Alerta resuelta" }`
 
-### `GET /api/alertas/contador`
+> *No existe endpoint dedicado `/api/alertas/contador`. El contador se calcula en el frontend como `alertas.length` sobre la respuesta de `GET /api/alertas`. Esto elimina un endpoint innecesario.*
 
-**Response 200**: `{ success: true, data: { cantidad: number } }`
 
----
-
-## Dashboard — `/api/dashboard` (requireRole superusuario)
-
-### `GET /api/dashboard/resumen`
-
-**Response 200**:
-```json
-{
-  "success": true,
-  "data": {
-    "total_items": number,
-    "disponibles": number,
-    "movimientos_hoy": number,
-    "alertas_vencidas": number,
-    "ultimas_alertas": [ ... ],
-    "ultimos_movimientos": [ ... ]
-  }
-}
-```

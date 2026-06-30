@@ -18,7 +18,7 @@
 │   Express.js gestiona peticiones HTTP                         │
 ├─────────────────────────────────────────────────────────────┤
 │                    DATOS                                      │
-│   models/    → Consultas SQL parametrizadas                   │
+│   services/  → Transaction Script (retiro/devolución)         │
 │   config/db.js → Pool de conexiones MySQL (mysql2/promise)    │
 │   MySQL 8.x → Almacenamiento persistente                      │
 └─────────────────────────────────────────────────────────────┘
@@ -42,10 +42,10 @@ Controller (lógica de negocio)
     │
     ├── Valida datos de entrada
     ├── Aplica reglas de negocio
-    └── Llama a modelo (consulta SQL parametrizada)
+    └── Llama a service (Transaction Script en services/)
     │
     ▼
-Model → Config/DB (pool mysql2)
+Service → Config/DB (pool mysql2)
     │
     ├── Conexión del pool
     ├── Consulta parametrizada (placeholders ?)
@@ -65,19 +65,17 @@ tic-stock/
 │   ├── auth.routes.js         # /api/auth/*
 │   ├── items.routes.js        # /api/items/*
 │   ├── movimientos.routes.js  # /api/movimientos/*
-│   ├── alertas.routes.js      # /api/alertas/*
-│   └── dashboard.routes.js    # /api/dashboard/*
+│   └── alertas.routes.js      # /api/alertas/*
 ├── controllers/
 │   ├── auth.controller.js
 │   ├── items.controller.js
 │   ├── movimientos.controller.js
-│   ├── alertas.controller.js
-│   └── dashboard.controller.js
+│   └── alertas.controller.js
 ├── middlewares/
 │   ├── auth.middleware.js      # requireAuth
 │   └── role.middleware.js      # requireRole(rol)
-├── models/
-│   └── (consultas SQL agrupadas por entidad)
+├── services/
+│   └── movimiento.service.js  # Transacciones atómicas (retiro + devolución)
 ├── public/
 │   ├── css/                   # Archivos CSS
 │   ├── js/                    # Archivos JS del frontend
@@ -85,9 +83,7 @@ tic-stock/
 │   ├── uploads/items/         # Fotos de ítems
 │   ├── login.html
 │   ├── registro.html
-│   ├── institucional.html
 │   ├── admin/
-│   │   ├── dashboard.html
 │   │   ├── inventario.html
 │   │   └── movimientos.html
 │   └── usuario/
@@ -97,9 +93,15 @@ tic-stock/
 ├── database/
 │   ├── schema.sql             # Esquema completo de BD
 │   └── seed.sql               # Datos de demo
-└── scripts/
-    └── generar-etiquetas.js   # Script para imprimir QR
+└── public/
+    └── vendor/                # Librerías locales (html5-qrcode.min.js)
 ```
+
+## Patrón Transaction Script
+
+Las operaciones críticas (retiro y devolución) se implementan con **Transaction Script** en `services/movimiento.service.js`. Cada método recibe una conexión del pool, ejecuta múltiples queries dentro de `beginTransaction/commit/rollback`, y libera la conexión en `finally`. Los controllers delegan en estos services y no manejan conexiones directamente.
+
+---
 
 ## Principios Arquitectónicos
 
@@ -108,7 +110,7 @@ tic-stock/
 3. **Consultas parametrizadas:** Nunca se concatena SQL. Todos los placeholders usan `?`.
 4. **Transacciones ACID:** Retiros y devoluciones se ejecutan dentro de transacciones MySQL para evitar inconsistencias.
 5. **Protección por capas:** Autenticación (sesión) + Autorización (roles) en cada ruta protegida.
-6. **Sin dependencias externas:** El frontend no usa CDNs para CSS, frameworks JS, ni librerías de UI.
+6. **Dependencias externas mínimas:** El frontend no usa frameworks JS ni librerías de UI. La única excepción es `html5-qrcode` para escaneo, que se sirve con respaldo local (`/public/vendor/`) para funcionar sin internet.
 7. **Configurable por entorno:** Conexión a BD, puerto, secretos vía `.env`.
 
 ## Formato de Respuesta API

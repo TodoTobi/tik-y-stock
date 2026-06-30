@@ -44,7 +44,10 @@ mysql -u root -p tic_stock < database/schema.sql
 # 6. (Opcional) Cargar datos de demo
 mysql -u root -p tic_stock < database/seed.sql
 
-# 7. Iniciar servidor
+# 7. Instalar dependencias de test
+npm install --save-dev supertest
+
+# 8. Iniciar servidor
 npm run dev
 ```
 
@@ -101,7 +104,7 @@ npm run dev
 - [ ] Base de datos con seed cargado (no vacía)
 - [ ] Usuario admin: admin@ticstock.edu / admin123
 - [ ] Usuario docente: docente@taller.edu / docente123
-- [ ] Alumnos de prueba: almuno1@test.com, alumno2@test.com / alumno123
+- [ ] Alumnos de prueba: alumno1@estudiante.edu, alumno2@estudiante.edu, alumno3@estudiante.edu / alumno123
 - [ ] Al menos 1 retiro sin devolver con fecha > 7 días (para alertas)
 - [ ] Etiquetas QR impresas y pegadas en los ítems de la demo
 - [ ] Cámara del celular/dispositivo funciona con la página (probar antes)
@@ -127,6 +130,16 @@ Si la cámara no se activa desde el celular (los navegadores móviles exigen HTT
 1. **Problema:** "El taller pierde 100 minutos semanales por persona buscando materiales"
 2. **Login como alumno** → catálogo: "En 5 segundos sé si el kit está disponible"
 3. **Escanear QR real** → confirmar retiro → catálogo actualizado al instante
-4. **Cambiar a sesión admin** → dashboard: movimiento reflejado
+4. **Cambiar a sesión admin** → movimientos: historial reflejado
 5. **Mostrar alerta vencida** del seed → resolverla en vivo
-6. **Cierre técnico:** "Monolito 3 capas, Node + Express + MySQL, corre en la red del taller sin internet ni cloud"
+6. **Cierre técnico:** "Monolito 3 capas con Transaction Script, Node + Express + MySQL, corre en la red del taller sin internet ni cloud"
+
+## Verificación post-despliegue
+
+```bash
+# Ejecutar tests antes de la demo
+npm test
+
+# Verificar que vendor local funciona (desconectar internet y probar escaneo)
+```
+Si todos los tests pasan, el sistema está listo para la demo.

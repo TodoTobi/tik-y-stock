@@ -16,7 +16,7 @@
 | **P1** | F5 - Movimientos | Retiro y devolución de ítems, historial, trazabilidad | F1, F2, F3 | ✅ Incluido |
 | **P1** | F6 - Escaneo QR/Barras | Lectura desde cámara + input manual + etiquetas | F3, F5 | ✅ Incluido |
 | **P2** | F7 - Alertas | Detección de devoluciones vencidas (+7 días) | F5 | ✅ Incluido (simplificado) |
-| **P2** | F9 - Dashboard admin | Resumen ejecutivo con métricas clave | F3, F5, F7 | ✅ Incluido |
+| **P2** | F9 - Dashboard admin | Resumen ejecutivo con métricas clave | F3, F5, F7 | ❌ Excluido (ver BACKLOG_FUTURO) |
 | **P3** | F10 - Página institucional | Info del proyecto y equipo | — | ⬜ Si sobra tiempo |
 | **P3** | F8 - Reservas/Compras | Solicitudes de compra y reservas | F5 | ❌ Excluido de 3 días |
 
@@ -28,7 +28,7 @@
 - El sistema debe permitir registro de nuevos usuarios (rol 'usuario' por defecto)
 - El sistema debe permitir login con email y contraseña
 - El sistema debe mantener sesión activa con expiración por inactividad (30 min)
-- El sistema debe redirigir según rol: admin → dashboard, usuario → catálogo
+- El sistema debe redirigir según rol: admin → /admin/movimientos.html, usuario → /usuario/catalogo.html
 - Criterio de aceptación: un usuario con credenciales válidas accede al sistema en < 3 segundos
 
 ### RF-02: Gestión de inventario
@@ -62,10 +62,6 @@
 - El superusuario debe poder ver y resolver alertas
 - Criterio de aceptación: las alertas se generan sin proceso en background, al consultar
 
-### RF-07: Dashboard de administración
-- El superusuario debe ver: total ítems, disponibles, movimientos del día, alertas activas
-- Criterio de aceptación: el dashboard carga en < 3 segundos con datos reales
-
 ---
 
 ## Requisitos No Funcionales (RNF)
@@ -89,7 +85,7 @@
 - Feedback inmediato en acciones críticas (retiro/devolución)
 
 ### RNF-04: Mantenibilidad
-- Código organizado en 3 capas (rutas/controladores/modelos)
+- Código organizado en 3 capas (rutas/controladores/services)
 - Formato de respuesta JSON consistente en toda la API
 - Comentarios mínimos, código auto-documentado
 
@@ -108,5 +104,5 @@
 
 | Rol | Permisos |
 |---|---|
-| **superusuario** | CRUD ítems, ver movimientos de todos, ver/resolver alertas, dashboard, gestionar usuarios |
+| **superusuario** | CRUD ítems, ver movimientos de todos, ver/resolver alertas |
 | **usuario** | Ver catálogo, escanear, retirar/devolver, ver sus propios préstamos activos |

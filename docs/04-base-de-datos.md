@@ -9,28 +9,28 @@
 ## Diagrama Entidad-Relación
 
 ```
-┌──────────────┐       ┌──────────────────┐       ┌──────────────┐
-│   usuarios   │       │     items        │       │   alertas    │
-├──────────────┤       ├──────────────────┤       ├──────────────┤
-│ id (PK)      │◄────┐ │ id (PK)          │       │ id (PK)      │
-│ nombre       │     │ │ nombre           │       │ id_mov (FK)  │◄────┐
-│ email (UQ)   │     │ │ categoria        │       │ estado       │     │
-│ contraseña   │     │ │ cantidad         │       │ fecha_venc   │     │
-│ rol          │     │ │ estado           │       │ fecha_resol  │     │
-│ fecha_creac  │     │ │ observaciones    │       └──────────────┘     │
-└──────────────┘     │ │ foto_url         │                            │
-                     │ │ ubicacion        │                            │
-                     │ │ codigo_escaneable│       ┌──────────────────┐ │
-                     │ │ (UQ)             │       │   movimientos    │ │
-                     │ │ fecha_creacion   │       ├──────────────────┤ │
-                     │ └──────────────────┘       │ id (PK)         │ │
-                     │                            │ id_item (FK)────┼─┘
+┌──────────────┐       ┌──────────────────┐
+│   usuarios   │       │     items        │
+├──────────────┤       ├──────────────────┤
+│ id (PK)      │◄────┐ │ id (PK)          │
+│ nombre       │     │ │ nombre           │
+│ email (UQ)   │     │ │ categoria        │
+│ contraseña   │     │ │ cantidad         │
+│ rol          │     │ │ estado           │
+│ fecha_creac  │     │ │ observaciones    │
+└──────────────┘     │ │ foto_url         │
+                     │ │ ubicacion        │
+                     │ │ codigo_escaneable│       ┌──────────────────┐
+                     │ │ (UQ)             │       │   movimientos    │
+                     │ │ fecha_creacion   │       ├──────────────────┤
+                     │ └──────────────────┘       │ id (PK)         │
+                     │                            │ id_item (FK)────┘
                      └────────────────────────────┤ id_usuario (FK)─┘
-                                                  │ tipo (retiro/dev)
-                                                  │ fecha_hora
-                                                  │ codigo_escaneado
-                                                  │ devuelto (bool)
-                                                  └──────────────────┘
+                                                   │ tipo (retiro/dev)
+                                                   │ fecha_hora
+                                                   │ codigo_escaneado
+                                                   │ devuelto (bool)
+                                                   └──────────────────┘
 ```
 
 ---
@@ -75,17 +75,7 @@
 | codigo_escaneado | VARCHAR(50) | NULLABLE | Código leído (si se usó escaneo) |
 | devuelto | BOOLEAN | NOT NULL, DEFAULT FALSE | Solo aplica si tipo='retiro' |
 
-### alertas (opcional — en PMV se calculan al vuelo)
-
-| Columna | Tipo | Restricciones | Descripción |
-|---|---|---|---|
-| id | INT | PK, AUTO_INCREMENT | Identificador único |
-| id_movimiento | INT | NOT NULL, FK → movimientos(id) | Movimiento que genera la alerta |
-| estado | ENUM('pendiente','vencida','resuelta') | NOT NULL, DEFAULT 'pendiente' | Estado de la alerta |
-| fecha_vencimiento | DATETIME | NOT NULL | Fecha límite de devolución |
-| fecha_resolucion | DATETIME | NULLABLE | Cuándo se resolvió |
-
-> **Nota para PMV:** La tabla `alertas` existe en el esquema pero no se usa activamente. Las alertas se calculan "al vuelo" consultando movimientos con tipo='retiro', devuelto=false y fecha_hora > 7 días.
+> **Nota para PMV:** No hay tabla `alertas`. Las alertas se calculan "al vuelo" consultando movimientos con tipo='retiro', devuelto=false y fecha_hora > 7 días. Esto evita dead schema y simplifica el mantenimiento.
 
 ---
 
@@ -124,12 +114,16 @@ COMMIT;
 
 ```sql
 START TRANSACTION;
-  -- 1. Marcar movimiento como devuelto
+  -- 1. Verificar ownership: el movimiento pertenece al usuario
+  SELECT id_usuario FROM movimientos WHERE id = ? AND tipo = 'retiro' AND devuelto = FALSE FOR UPDATE;
+  -- 2. Marcar movimiento como devuelto
   UPDATE movimientos SET devuelto = TRUE WHERE id = ?;
-  -- 2. Sumar 1 unidad
+  -- 3. Sumar 1 unidad
   UPDATE items SET cantidad = cantidad + 1 WHERE id = ?;
-  -- 3. Si estaba 'en_uso' y ahora cantidad > 0, volver a 'disponible'
+  -- 4. Si estaba 'en_uso' y ahora cantidad > 0, volver a 'disponible'
   UPDATE items SET estado = 'disponible' WHERE id = ? AND estado = 'en_uso' AND cantidad > 0;
+  -- 5. Si existe un movimiento asociado con fecha > 7 días, resolver implícitamente
+  -- (no requiere acción adicional: la alerta se calcula al vuelo)
 COMMIT;
 ```
 
