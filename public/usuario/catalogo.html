@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo — TIC & Stock</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>TIC & Stock</h1>
+    <nav>
+      <a href="/usuario/catalogo.html" class="active">Catálogo</a>
+      <a href="/usuario/escaneo.html">Escanear</a>
+      <a href="/usuario/prestamos.html">Mis Préstamos</a>
+      <a href="#" id="logoutBtn">Cerrar sesión</a>
+    </nav>
+  </header>
+  <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2>Catálogo de Inventario</h2>
+      <span id="summary" style="font-size:14px;color:#666;"></span>
+    </div>
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." oninput="cargarCatalogo()">
+      <select id="categoriaFilter" onchange="cargarCatalogo()"><option value="">Todas</option></select>
+      <label style="font-size:14px;display:flex;align-items:center;gap:4px;">
+        <input type="checkbox" id="soloDisponibles" onchange="cargarCatalogo()"> Solo disponibles
+      </label>
+    </div>
+    <div id="loading" class="loading"><div class="spinner"></div></div>
+    <div id="gridContainer" class="card-grid"></div>
+  </main>
+
+  <div class="modal" id="detailModal">
+    <div class="modal-content">
+      <h2 id="detailNombre"></h2>
+      <div id="detailBody"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="cerrarDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/usuario-catalogo.js"></script>
+</body>
+</html>

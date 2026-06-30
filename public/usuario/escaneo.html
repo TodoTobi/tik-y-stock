@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escanear — TIC & Stock</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>TIC & Stock</h1>
+    <nav>
+      <a href="/usuario/catalogo.html">Catálogo</a>
+      <a href="/usuario/escaneo.html" class="active">Escanear</a>
+      <a href="/usuario/prestamos.html">Mis Préstamos</a>
+      <a href="#" id="logoutBtn">Cerrar sesión</a>
+    </nav>
+  </header>
+  <main>
+    <h2 style="margin-bottom:16px;">Escaneo de Código</h2>
+    <div style="max-width:500px;margin:0 auto;">
+      <div id="reader" style="width:100%;border:2px dashed #d1d5db;border-radius:8px;padding:16px;margin-bottom:16px;min-height:200px;display:flex;align-items:center;justify-content:center;background:#f9fafb;">
+        <p style="color:#9ca3af;">Activá la cámara o usá el input manual</p>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="codigoInput" placeholder="Ingresá el código manualmente..." style="flex:1;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;" autofocus>
+        <button id="btnBuscar" class="btn btn-primary">Buscar</button>
+      </div>
+      <div id="loadingScan" class="loading" style="display:none;"><div class="spinner"></div></div>
+      <div id="resultado" style="display:none;"></div>
+    </div>
+  </main>
+  <script src="/vendor/html5-qrcode.min.js"></script>
+  <script src="/js/usuario-escaneo.js"></script>
+</body>
+</html>

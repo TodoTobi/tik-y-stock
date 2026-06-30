@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Préstamos — TIC & Stock</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>TIC & Stock</h1>
+    <nav>
+      <a href="/usuario/catalogo.html">Catálogo</a>
+      <a href="/usuario/escaneo.html">Escanear</a>
+      <a href="/usuario/prestamos.html" class="active">Mis Préstamos</a>
+      <a href="#" id="logoutBtn">Cerrar sesión</a>
+    </nav>
+  </header>
+  <main>
+    <h2 style="margin-bottom:16px;">Mis Préstamos Activos</h2>
+    <div id="loading" class="loading"><div class="spinner"></div></div>
+    <div id="tableContainer"></div>
+  </main>
+  <script src="/js/usuario-prestamos.js"></script>
+</body>
+</html>
