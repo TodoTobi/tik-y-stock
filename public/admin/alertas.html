@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alertas — TIC & Stock</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>TIC & Stock</h1>
+    <nav>
+      <a href="/admin/inventario.html">Inventario</a>
+      <a href="/admin/movimientos.html">Movimientos</a>
+      <a href="/admin/alertas.html" class="active">Alertas</a>
+      <a href="#" id="logoutBtn">Cerrar sesión</a>
+    </nav>
+  </header>
+  <main>
+    <h2 style="margin-bottom:16px;">Alertas de Devolución Vencida</h2>
+    <div id="loading" class="loading"><div class="spinner"></div></div>
+    <div id="tableContainer"></div>
+  </main>
+  <script src="/js/admin-alertas.js"></script>
+</body>
+</html>
