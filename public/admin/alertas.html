@@ -1,26 +1,325 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alertas — TIC & Stock</title>
-  <link rel="stylesheet" href="/css/style.css">
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TIC y Stock - Alertas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+darkMode: "class",
+theme: { extend: {
+colors: {
+"sidebar-bg": "#0F172A", "primary": "#00288e", "primary-container": "#1e40af",
+"text-main": "#1E293B", "text-muted": "#64748B", "border-default": "#E2E8F0",
+"surface": "#f7f9fb", "surface-container-lowest": "#ffffff",
+"surface-container-low": "#f2f4f6", "surface-bright": "#f7f9fb",
+"success": "#10B981", "danger": "#EF4444", "info": "#3B82F6", "error": "#ba1a1a",
+"outline": "#757684", "outline-variant": "#c4c5d5",
+"on-surface": "#191c1e", "on-surface-variant": "#444653",
+"on-primary": "#ffffff", "on-primary-fixed-variant": "#173bab", "on-primary-fixed": "#001453"
+},
+borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+spacing: {
+"sidebar-width": "260px", "container-max": "1280px",
+"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px", "gutter": "24px", "base": "4px"
+},
+fontFamily: {
+"body-md": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Inter"],
+"headline-lg": ["Inter"], "display-lg": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"]
+},
+fontSize: {
+"display-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}],
+"headline-lg": ["24px", {lineHeight: "32px", fontWeight: "700"}],
+"headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}],
+"title-md": ["16px", {lineHeight: "24px", fontWeight: "500"}],
+"body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}],
+"body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}],
+"label-md": ["12px", {lineHeight: "12px", letterSpacing: "0.05em", fontWeight: "600"}]
+}
+} }
+}
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+.sidebar-active { border-left: 4px solid #3B82F6; background-color: rgba(255, 255, 255, 0.05); color: #3B82F6; font-weight: 700; }
+</style>
 </head>
-<body>
-  <header>
-    <h1>TIC & Stock</h1>
-    <nav>
-      <a href="/admin/inventario.html">Inventario</a>
-      <a href="/admin/movimientos.html">Movimientos</a>
-      <a href="/admin/alertas.html" class="active">Alertas</a>
-      <a href="#" id="logoutBtn">Cerrar sesión</a>
-    </nav>
-  </header>
-  <main>
-    <h2 style="margin-bottom:16px;">Alertas de Devolución Vencida</h2>
-    <div id="loading" class="loading"><div class="spinner"></div></div>
-    <div id="tableContainer"></div>
-  </main>
-  <script src="/js/admin-alertas.js"></script>
-</body>
-</html>
+<body class="flex min-h-screen text-on-surface bg-surface-bright">
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-sidebar-bg flex flex-col py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-white tracking-tight">TIC y Stock</h1>
+<p class="text-body-sm text-on-primary-fixed-variant opacity-60">Admin TIC</p>
+</div>
+<nav class="flex-grow space-y-xs">
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="inventario.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Inventario</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="movimientos.html">
+<span class="material-symbols-outlined">swap_horiz</span>
+<span class="font-body-md text-body-md">Movimientos</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md sidebar-active transition-colors duration-150" href="alertas.html">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-body-md text-body-md">Alertas</span>
+</a>
+</nav>
+<div class="mt-auto px-lg pt-lg border-t border-white/10">
+<div class="flex items-center gap-md p-sm rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-info">admin_panel_settings</span>
+</div>
+<div class="overflow-hidden flex-1">
+<p class="font-title-md text-title-md text-white truncate">Superusuario</p>
+<div class="flex items-center gap-xs text-on-primary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-sm" onclick="cerrarSesion()">logout</span>
+<span class="text-body-sm cursor-pointer hover:text-white transition-colors" onclick="cerrarSesion()">Cerrar Sesión</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-sidebar-width flex-grow min-h-screen overflow-hidden">
+<header class="flex justify-between items-center w-full px-lg py-sm border-b border-border-default bg-surface-bright z-40">
+<div class="flex items-center gap-sm">
+<span class="text-text-muted text-body-sm">Admin</span>
+<span class="material-symbols-outlined text-text-muted text-[16px]">chevron_right</span>
+<span class="text-primary font-bold text-body-md">Alertas</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-text-muted hover:text-primary transition-colors" onclick="cerrarSesion()">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-lg">
+<div class="max-w-container-max mx-auto space-y-lg">
+<div class="flex items-end justify-between mb-xl">
+<div>
+<h2 class="font-display-lg text-display-lg text-text-main flex items-center gap-md">
+                        Alertas
+                        <span class="bg-danger text-white px-3 py-1 rounded-full text-title-md font-bold" id="alertCount">7</span>
+</h2>
+<p class="text-text-muted font-body-md mt-sm">Gesti&oacute;n centralizada de incidencias y avisos cr&iacute;ticos del sistema.</p>
+</div>
+<div class="flex gap-md">
+<button class="flex items-center gap-sm bg-surface-container-lowest border border-border-default px-md py-sm rounded-lg font-title-md text-text-main hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        Exportar
+                    </button>
+<button class="flex items-center gap-sm bg-primary-container text-white px-md py-sm rounded-lg font-title-md hover:opacity-90 active:scale-95 transition-all" onclick="cargarAlertas()">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+                        Actualizar
+                    </button>
+</div>
+</div>
+<!-- Filters -->
+<section class="bg-white p-md rounded-xl border border-border-default shadow-sm mb-lg flex flex-wrap items-center gap-lg">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-text-muted">Tipo de Alerta</label>
+<select id="tipoFilter" class="bg-surface border border-border-default rounded-lg text-body-md py-2 pl-3 pr-10 focus:border-primary focus:ring-0 w-56">
+<option>Todos los tipos</option>
+<option>Retraso</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-text-muted">Estado</label>
+<select id="estadoFilter" class="bg-surface border border-border-default rounded-lg text-body-md py-2 pl-3 pr-10 focus:border-primary focus:ring-0 w-48">
+<option>Pendiente</option>
+<option>Resuelta</option>
+<option>Todas</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-text-muted">Prioridad</label>
+<div class="flex gap-sm">
+<button class="px-md py-2 rounded-lg border border-border-default text-body-md bg-surface hover:bg-surface-variant transition-colors">Alta</button>
+<button class="px-md py-2 rounded-lg border border-border-default text-body-md bg-surface hover:bg-surface-variant transition-colors">Media</button>
+</div>
+</div>
+<button class="mt-auto mb-1 text-primary font-title-md hover:underline">Limpiar Filtros</button>
+</section>
+<!-- Alerts Table -->
+<section class="bg-white rounded-xl border border-border-default shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low border-b border-border-default">
+<tr>
+<th class="px-lg py-md font-label-md text-text-muted">TIPO</th>
+<th class="px-lg py-md font-label-md text-text-muted">ITEM</th>
+<th class="px-lg py-md font-label-md text-text-muted">MENSAJE</th>
+<th class="px-lg py-md font-label-md text-text-muted">FECHA</th>
+<th class="px-lg py-md font-label-md text-text-muted">ESTADO</th>
+<th class="px-lg py-md font-label-md text-text-muted text-right">ACCIONES</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default" id="alertasBody">
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-lg py-md border-t border-border-default flex items-center justify-between bg-surface-container-low">
+<p class="text-body-sm text-text-muted">Mostrando 1 a 4 de 7 alertas</p>
+<div class="flex gap-sm">
+<button class="p-2 border border-border-default rounded hover:bg-white disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 bg-primary text-white rounded font-bold">1</button>
+<button class="w-10 h-10 border border-border-default rounded hover:bg-white">2</button>
+<button class="p-2 border border-border-default rounded hover:bg-white">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<footer class="bg-surface-container-low border-t border-border-default py-md px-lg flex justify-between items-center w-full">
+<p class="text-body-sm text-text-muted">&copy; 2026 TIC y Stock &mdash; Todos los derechos reservados.</p>
+<div class="flex gap-lg">
+<a class="text-body-sm text-text-muted hover:text-primary transition-colors" href="#">Soporte T&eacute;cnico</a>
+<a class="text-body-sm text-text-muted hover:text-primary transition-colors" href="#">Pol&iacute;tica de Privacidad</a>
+<a class="text-body-sm text-text-muted hover:text-primary transition-colors" href="#">Manual de Usuario</a>
+</div>
+</footer>
+</main>
+<!-- Confirmation Modal -->
+<div class="fixed inset-0 z-[60] hidden" id="resolveModal">
+<div class="modal-overlay absolute inset-0"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-2xl p-xl border border-border-default">
+<div class="flex items-center gap-md text-info mb-lg">
+<span class="material-symbols-outlined text-4xl" data-icon="check_circle">check_circle</span>
+<h3 class="font-headline-md text-headline-md text-text-main">Resolver Alerta</h3>
+</div>
+<p class="text-body-md text-text-muted mb-lg leading-relaxed">
+                &iquest;Est&aacute; seguro de que desea marcar la alerta de <strong class="text-text-main" id="modalItemName">este item</strong> como resuelta? Esta acci&oacute;n quedar&aacute; registrada en el historial del sistema.
+            </p>
+<div class="flex flex-col gap-md mb-xl">
+<label class="font-label-md text-text-muted">Nota de resoluci&oacute;n (opcional)</label>
+<textarea class="bg-surface border border-border-default rounded-lg p-md text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" placeholder="Escriba c&oacute;mo se solucion&oacute; la incidencia..." rows="3"></textarea>
+</div>
+<div class="flex gap-md justify-end">
+<button class="px-lg py-md rounded-lg font-title-md border border-border-default text-text-main hover:bg-surface-container transition-colors" onclick="closeResolveModal()">
+                    Cancelar
+                </button>
+<button class="px-lg py-md rounded-lg font-title-md bg-primary text-white hover:bg-primary-container shadow-lg shadow-primary/20 active:scale-95 transition-all" onclick="resolverAlerta()">
+                    Confirmar Resoluci&oacute;n
+                </button>
+</div>
+</div>
+</div>
+<script>
+        const h = (s) => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+        let alertaIdResolver = null;
+        let todasAlertas = [];
+
+        async function verificarSesion() {
+          const res = await fetch('/api/auth/me');
+          const data = await res.json();
+          if (!data.success || data.data.rol !== 'superusuario') window.location.href = '/login.html';
+        }
+
+        function filtrarAlertas() {
+          const estadoFiltro = document.getElementById('estadoFilter')?.value || 'Pendiente';
+          return todasAlertas.filter(a => {
+            const dias = Math.floor((Date.now() - new Date(a.fecha_hora)) / (1000*60*60*24));
+            const esCritica = dias > 7;
+            if (estadoFiltro === 'Pendiente' && esCritica) return false;
+            if (estadoFiltro === 'Resuelta') return false;
+            return true;
+          });
+        }
+
+        function renderAlertas(alertas) {
+          const tbody = document.getElementById('alertasBody');
+          const alertCount = document.getElementById('alertCount');
+          if (!tbody) return;
+          if (alertCount) alertCount.textContent = alertas.length;
+          if (alertas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-lg py-lg text-center text-text-muted">No hay alertas pendientes</td></tr>';
+            return;
+          }
+          tbody.innerHTML = alertas.map(a => {
+            const dias = Math.floor((Date.now() - new Date(a.fecha_hora)) / (1000*60*60*24));
+            const estadoColor = dias > 7 ? 'bg-danger text-white' : 'bg-[#FEF3C7] text-[#92400E]';
+            const estadoText = dias > 7 ? 'Crítica' : 'Pendiente';
+            const itemNombreEsc = h(a.item_nombre);
+            const itemCodigoEsc = h(a.item_codigo || '—');
+            const usuarioNombreEsc = h(a.usuario_nombre);
+            return `<tr class="table-row-hover transition-colors">
+                <td class="px-lg py-lg"><div class="w-10 h-10 rounded bg-tertiary-fixed-dim/20 text-tertiary flex items-center justify-center"><span class="material-symbols-outlined">inventory_2</span></div></td>
+                <td class="px-lg py-lg"><p class="font-title-md text-text-main">${itemNombreEsc}</p><p class="font-body-sm text-text-muted">ID: ${itemCodigoEsc}</p></td>
+                <td class="px-lg py-lg"><p class="font-body-md text-text-main">Retraso de ${dias} días — ${usuarioNombreEsc}</p></td>
+                <td class="px-lg py-lg"><p class="font-body-md text-text-main">${new Date(a.fecha_hora).toLocaleString()}</p></td>
+                <td class="px-lg py-lg"><span class="${estadoColor} px-3 py-1 rounded-full text-body-sm font-semibold">${estadoText}</span></td>
+                <td class="px-lg py-lg text-right"><button class="bg-primary text-white px-md py-2 rounded-lg font-title-md hover:bg-primary-container active:scale-95 transition-all" onclick="openResolveModal(${a.id}, '${itemNombreEsc}')">Resolver</button></td>
+              </tr>`;
+          }).join('');
+        }
+
+        async function cargarAlertas() {
+          const tbody = document.getElementById('alertasBody');
+          if (!tbody) return;
+          tbody.innerHTML = '<tr><td colspan="6" class="px-lg py-lg text-center text-text-muted">Cargando...</td></tr>';
+          try {
+            const res = await fetch('/api/alertas');
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message);
+            todasAlertas = data.data;
+            renderAlertas(filtrarAlertas());
+          } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="6" class="px-lg py-lg text-center text-danger">Error: ${h(err.message)}</td></tr>`;
+          }
+        }
+
+        function openResolveModal(id, itemName) {
+          alertaIdResolver = id;
+          document.getElementById('modalItemName').textContent = itemName;
+          document.getElementById('resolveModal').classList.remove('hidden');
+          document.getElementById('resolveModal').classList.add('flex');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeResolveModal() {
+          document.getElementById('resolveModal').classList.add('hidden');
+          document.getElementById('resolveModal').classList.remove('flex');
+          document.body.style.overflow = 'auto';
+        }
+
+        async function resolverAlerta() {
+          if (!alertaIdResolver) return;
+          const nota = document.querySelector('#resolveModal textarea')?.value || '';
+          try {
+            const res = await fetch(`/api/alertas/${alertaIdResolver}/resolver`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nota })
+            });
+            const data = await res.json();
+            if (data.success) { closeResolveModal(); await cargarAlertas(); }
+            else alert(data.message);
+          } catch { alert('Error de conexi\u00f3n'); }
+        }
+
+        async function cerrarSesion() {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          window.location.href = '/login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+          await verificarSesion();
+          await cargarAlertas();
+          document.getElementById('estadoFilter')?.addEventListener('change', () => renderAlertas(filtrarAlertas()));
+        });
+
+        window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeResolveModal(); });
+    </script>
+</body></html>

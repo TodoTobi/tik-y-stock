@@ -14,6 +14,10 @@ async function retiroItem(idItem, idUsuario, codigoEscaneado) {
       'UPDATE items SET cantidad = cantidad - 1 WHERE id = ?',
       [idItem]
     );
+    await connection.query(
+      "UPDATE items SET estado = 'en_uso' WHERE id = ? AND cantidad = 0",
+      [idItem]
+    );
     const [result] = await connection.query(
       `INSERT INTO movimientos (id_item, id_usuario, tipo, codigo_escaneado)
        VALUES (?, ?, 'retiro', ?)`,
@@ -29,7 +33,7 @@ async function retiroItem(idItem, idUsuario, codigoEscaneado) {
   }
 }
 
-async function devolucionItem(idMovimiento, idUsuario) {
+async function devolucionItem(idMovimiento, idUsuario, skipOwnershipCheck = false) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
@@ -39,13 +43,17 @@ async function devolucionItem(idMovimiento, idUsuario) {
     );
     if (mov.length === 0) throw new Error('Movimiento no encontrado');
     if (mov[0].devuelto) throw new Error('Este movimiento ya fue devuelto');
-    if (mov[0].id_usuario !== idUsuario) throw new Error('No puedes devolver un retiro de otro usuario');
+    if (!skipOwnershipCheck && mov[0].id_usuario !== idUsuario) throw new Error('No puedes devolver un retiro de otro usuario');
     await connection.query(
       'UPDATE movimientos SET devuelto = TRUE WHERE id = ?',
       [idMovimiento]
     );
     await connection.query(
       'UPDATE items SET cantidad = cantidad + 1 WHERE id = ?',
+      [mov[0].id_item]
+    );
+    await connection.query(
+      "UPDATE items SET estado = 'disponible' WHERE id = ? AND estado = 'en_uso' AND cantidad > 0",
       [mov[0].id_item]
     );
     const [result] = await connection.query(

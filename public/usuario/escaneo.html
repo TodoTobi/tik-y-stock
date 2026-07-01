@@ -1,36 +1,341 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escanear — TIC & Stock</title>
-  <link rel="stylesheet" href="/css/style.css">
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Escanear Código QR - TIC y Stock</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "sidebar-bg": "#0F172A",
+        "primary": "#00288e",
+        "primary-container": "#1e40af",
+        "text-main": "#1E293B",
+        "text-muted": "#64748B",
+        "border-default": "#E2E8F0",
+        "surface": "#f7f9fb",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#f2f4f6",
+        "surface-bright": "#f7f9fb",
+        "success": "#10B981",
+        "danger": "#EF4444",
+        "info": "#3B82F6",
+        "error": "#ba1a1a",
+        "outline": "#757684",
+        "outline-variant": "#c4c5d5",
+        "on-surface": "#191c1e",
+        "on-surface-variant": "#444653",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#173bab",
+        "on-primary-fixed": "#001453"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: {
+        "sidebar-width": "260px", "container-max": "1280px",
+        "xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px", "gutter": "24px", "base": "4px"
+      },
+      fontFamily: {
+        "body-md": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Inter"],
+        "headline-lg": ["Inter"], "display-lg": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"]
+      },
+      fontSize: {
+        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+        "label-md": ["12px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+.sidebar-active { border-left: 4px solid #3B82F6; background-color: rgba(255, 255, 255, 0.05); color: #3B82F6; font-weight: 700; }
+@keyframes scan { 0%, 100% { top: 0; opacity: 0.1; } 50% { top: 100%; opacity: 1; } }
+.scan-line { height: 2px; width: 100%; background: linear-gradient(to right, transparent, #3B82F6, transparent); position: absolute; animation: scan 3s infinite ease-in-out; box-shadow: 0 0 15px 2px rgba(59, 130, 246, 0.5); }
+.corner-border { position: absolute; width: 32px; height: 32px; border-color: #3B82F6; }
+.corner-tl { top: -4px; left: -4px; border-top-width: 4px; border-left-width: 4px; border-top-left-radius: 8px; }
+.corner-tr { top: -4px; right: -4px; border-top-width: 4px; border-right-width: 4px; border-top-right-radius: 8px; }
+.corner-bl { bottom: -4px; left: -4px; border-bottom-width: 4px; border-left-width: 4px; border-bottom-left-radius: 8px; }
+.corner-br { bottom: -4px; right: -4px; border-bottom-width: 4px; border-right-width: 4px; border-bottom-right-radius: 8px; }
+.glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+</style>
 </head>
-<body>
-  <header>
-    <h1>TIC & Stock</h1>
-    <nav>
-      <a href="/usuario/catalogo.html">Catálogo</a>
-      <a href="/usuario/escaneo.html" class="active">Escanear</a>
-      <a href="/usuario/prestamos.html">Mis Préstamos</a>
-      <a href="#" id="logoutBtn">Cerrar sesión</a>
-    </nav>
-  </header>
-  <main>
-    <h2 style="margin-bottom:16px;">Escaneo de Código</h2>
-    <div style="max-width:500px;margin:0 auto;">
-      <div id="reader" style="width:100%;border:2px dashed #d1d5db;border-radius:8px;padding:16px;margin-bottom:16px;min-height:200px;display:flex;align-items:center;justify-content:center;background:#f9fafb;">
-        <p style="color:#9ca3af;">Activá la cámara o usá el input manual</p>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:12px;">
-        <input type="text" id="codigoInput" placeholder="Ingresá el código manualmente..." style="flex:1;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;" autofocus>
-        <button id="btnBuscar" class="btn btn-primary">Buscar</button>
-      </div>
-      <div id="loadingScan" class="loading" style="display:none;"><div class="spinner"></div></div>
-      <div id="resultado" style="display:none;"></div>
-    </div>
-  </main>
-  <script src="/vendor/html5-qrcode.min.js"></script>
-  <script src="/js/usuario-escaneo.js"></script>
-</body>
-</html>
+<body class="flex min-h-screen text-on-surface">
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-sidebar-bg flex flex-col py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-white tracking-tight">Inventario Escolar</h1>
+<p class="text-body-sm text-on-primary-fixed-variant opacity-60">Gestión Académica</p>
+</div>
+<nav class="flex-grow space-y-xs">
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="catalogo.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Catálogo</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md sidebar-active transition-colors duration-150" href="escaneo.html">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-body-md text-body-md">Escanear</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="prestamos.html">
+<span class="material-symbols-outlined">handshake</span>
+<span class="font-body-md text-body-md">Mis Préstamos</span>
+</a>
+</nav>
+<div class="mt-auto px-lg pt-lg border-t border-white/10">
+<div class="flex items-center gap-md p-sm rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+<div class="overflow-hidden">
+<p class="font-title-md text-title-md text-white truncate">Alumno</p>
+<div class="flex items-center gap-xs text-on-primary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-sm" onclick="cerrarSesion()">logout</span>
+<span class="text-body-sm cursor-pointer hover:text-white transition-colors" onclick="cerrarSesion()">Cerrar Sesión</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-sidebar-width flex-grow min-h-screen bg-surface-bright">
+<header class="flex justify-between items-center w-full px-lg py-sm border-b border-border-default sticky top-0 bg-surface-bright/80 backdrop-blur-md z-40">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-headline-lg text-primary">TIC y Stock</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-text-muted hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-sm text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="p-sm text-text-muted hover:text-primary transition-colors" onclick="cerrarSesion()">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<div class="p-lg flex-1">
+<div class="max-w-[1000px] mx-auto space-y-xl">
+<!-- Title -->
+<header>
+<h2 class="font-headline-lg text-headline-lg text-text-main">Escanear Código QR</h2>
+<p class="text-body-md text-text-muted mt-1">Gestiona tus préstamos escaneando el identificador del equipo.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left: Scanning Area -->
+<section class="lg:col-span-7 space-y-lg">
+<div class="glass-panel rounded-xl p-xl flex flex-col items-center justify-center relative overflow-hidden">
+<!-- Scanning Viewport -->
+<div class="relative w-[400px] h-[300px] max-w-full bg-black/5 rounded-lg border-2 border-dashed border-border-default flex items-center justify-center">
+<!-- Corner Animations -->
+<div class="corner-border corner-tl"></div>
+<div class="corner-border corner-tr"></div>
+<div class="corner-border corner-bl"></div>
+<div class="corner-border corner-br"></div>
+<!-- Laser Line -->
+<div class="scan-line"></div>
+<div id="reader" class="w-full h-full" style="display:flex;align-items:center;justify-content:center;overflow:hidden;">
+<div class="flex flex-col items-center justify-center text-primary-container/40">
+<span class="material-symbols-outlined text-[64px] mb-md" style="font-variation-settings: 'wght' 200;">qr_code_scanner</span>
+<p class="font-label-md text-label-md uppercase tracking-widest">Iniciando cámara...</p>
+</div>
+</div>
+</div>
+<p class="text-body-md text-text-muted mt-lg text-center px-md">
+                                Coloca el código QR del equipo frente a la cámara para escanearlo automáticamente.
+                            </p>
+</div>
+<!-- Manual Input Row -->
+<div class="glass-panel rounded-xl p-md flex flex-wrap items-center gap-md">
+<div class="flex-1 relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-text-muted">keyboard</span>
+<input id="codigoInput" class="w-full pl-xl pr-md py-sm bg-white border border-border-default rounded-lg focus:ring-2 focus:ring-info/20 focus:border-info transition-all outline-none text-body-md" placeholder="Ingresar código manual (Ej: TIC-0021)" type="text"/>
+</div>
+<button id="btnBuscar" class="bg-primary-container text-white px-xl py-sm rounded-lg font-title-md hover:bg-primary transition-all active:scale-95 flex items-center gap-sm">
+<span class="material-symbols-outlined">search</span>
+                                Buscar
+                            </button>
+</div>
+</section>
+<!-- Right: Result / History Area -->
+<section class="lg:col-span-5 space-y-md">
+<div class="bg-white rounded-xl shadow-sm border border-border-default overflow-hidden flex flex-col h-full">
+<div class="px-lg py-md border-b border-border-default bg-surface-container-low flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-text-main flex items-center gap-sm">
+<span class="material-symbols-outlined text-info">qr_code_scanner</span>
+                                    Resultado
+                                </h3>
+<button class="text-info font-label-md hover:underline" onclick="document.getElementById('codigoInput').value='';document.getElementById('resultado').style.display='none'">Limpiar</button>
+</div>
+<div class="divide-y divide-border-default overflow-y-auto max-h-[500px]">
+<div id="resultado" style="display:none;"></div>
+</div>
+<div class="mt-auto p-lg bg-surface-container border-t border-border-default">
+<button class="w-full py-md border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all active:scale-95 flex items-center justify-center gap-sm" onclick="window.location.href='prestamos.html'">
+<span class="material-symbols-outlined">receipt_long</span>
+                                    Ver Todos mis Préstamos
+                                </button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Micro-interaction + Integration Script -->
+<script>
+        const h = (s) => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+        let html5QrCode = null;
+        let ultimoItem = null;
+
+        async function verificarSesion() {
+          const res = await fetch('/api/auth/me');
+          const data = await res.json();
+          if (!data.success) window.location.href = '/login.html';
+        }
+
+        async function detenerCamara() {
+          if (html5QrCode) {
+            try { await html5QrCode.stop(); } catch {}
+            try { await html5QrCode.clear(); } catch {}
+            html5QrCode = null;
+          }
+        }
+
+        async function iniciarCamara() {
+          const readerEl = document.getElementById('reader');
+          if (!readerEl || typeof Html5Qrcode === 'undefined') return;
+          await detenerCamara();
+          html5QrCode = new Html5Qrcode('reader');
+          try {
+            await html5QrCode.start(
+              { facingMode: 'environment' },
+              { fps: 10, qrbox: { width: 250, height: 250 } },
+              onScanSuccess,
+              () => {}
+            );
+          } catch {
+            readerEl.innerHTML = '<p class="text-body-md text-text-muted text-center py-xl">Cámara no disponible. Use el ingreso manual.</p>';
+          }
+        }
+
+        async function onScanSuccess(decodedText) {
+          await detenerCamara();
+          document.getElementById('codigoInput').value = decodedText;
+          buscarPorCodigo();
+        }
+
+        async function buscarPorCodigo() {
+          const codigo = document.getElementById('codigoInput').value.trim();
+          if (!codigo) return;
+          const resultDiv = document.getElementById('resultado');
+          if (resultDiv) resultDiv.style.display = 'none';
+          try {
+            const res = await fetch(`/api/items?busqueda=${encodeURIComponent(codigo)}`);
+            const data = await res.json();
+            if (!data.success || data.data.length === 0) {
+              mostrarMensaje('Ítem no encontrado', 'error');
+              return;
+            }
+            const item = data.data.find(i => i.codigo_escaneable === codigo) || data.data[0];
+            ultimoItem = item;
+            if (resultDiv) {
+              resultDiv.style.display = 'block';
+              const nombreEsc = h(item.nombre);
+              const codigoEsc = h(item.codigo_escaneable);
+              const categoriaEsc = h(item.categoria);
+              const fotoHtml = item.foto_url ? `<img src="${item.foto_url.replace(/[<>"'()]/g, '')}" class="w-full h-32 object-cover rounded-lg">` : '';
+              const disabledAttr = item.cantidad <= 0 || item.estado !== 'disponible' ? 'disabled' : '';
+              resultDiv.innerHTML = `<div class="glass-panel rounded-xl p-lg mt-md flex flex-col gap-md">
+                ${fotoHtml}
+                <h3 class="font-title-md text-title-md text-text-main">${nombreEsc}</h3>
+                <p class="text-body-sm text-text-muted">Código: ${codigoEsc} · ${categoriaEsc} · ${item.cantidad} disp.</p>
+                <div class="flex gap-sm">
+                  <button class="flex-1 bg-primary-container text-white py-sm px-md rounded-lg font-title-md hover:brightness-110 active:scale-95 transition-all" onclick="confirmarRetiro()" ${disabledAttr}>Retirar</button>
+                  <button class="flex-1 bg-success text-white py-sm px-md rounded-lg font-title-md hover:brightness-110 active:scale-95 transition-all" onclick="devolverItem()">Devolver</button>
+                </div>
+              </div>`;
+            }
+          } catch {
+            mostrarMensaje('Error de conexión', 'error');
+          }
+        }
+
+        async function confirmarRetiro() {
+          if (!ultimoItem) return;
+          try {
+            const res = await fetch('/api/movimientos/retiro', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_item: ultimoItem.id, codigo_escaneado: ultimoItem.codigo_escaneable })
+            });
+            const data = await res.json();
+            if (data.success) { mostrarMensaje('Retiro exitoso', 'success'); ultimoItem = null; document.getElementById('codigoInput').value = ''; }
+            else mostrarMensaje(h(data.message), 'error');
+          } catch { mostrarMensaje('Error de conexión', 'error'); }
+        }
+
+        async function devolverItem() {
+          if (!ultimoItem) { mostrarMensaje('Escanee un código primero', 'error'); return; }
+          try {
+            const res = await fetch('/api/movimientos/mis-prestamos');
+            const data = await res.json();
+            if (!data.success) { mostrarMensaje('Error al buscar préstamos', 'error'); return; }
+            const mov = data.data.find(m => m.id_item === ultimoItem.id && m.tipo === 'retiro' && !m.devuelto);
+            if (!mov) { mostrarMensaje('No tiene un retiro activo de este ítem', 'error'); return; }
+            const res2 = await fetch('/api/movimientos/devolucion', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_movimiento: mov.id })
+            });
+            const data2 = await res2.json();
+            if (data2.success) { mostrarMensaje('Devolución exitosa', 'success'); document.getElementById('codigoInput').value = ''; }
+            else mostrarMensaje(h(data2.message), 'error');
+          } catch { mostrarMensaje('Error de conexión', 'error'); }
+        }
+
+        function mostrarMensaje(msg, tipo) {
+          const resultDiv = document.getElementById('resultado');
+          if (!resultDiv) return;
+          resultDiv.style.display = 'block';
+          resultDiv.innerHTML = `<div class="glass-panel rounded-xl p-lg mt-md text-center">
+            <p class="font-title-md text-title-md ${tipo === 'error' ? 'text-danger' : 'text-success'}">${h(msg)}</p>
+          </div>`;
+          if (tipo === 'success') {
+            setTimeout(() => { resultDiv.style.display = 'none'; iniciarCamara(); }, 2000);
+          }
+        }
+
+        async function cerrarSesion() {
+          if (html5QrCode) await html5QrCode.stop().catch(() => {});
+          await fetch('/api/auth/logout', { method: 'POST' });
+          window.location.href = '/login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+          await verificarSesion();
+          iniciarCamara();
+          document.getElementById('codigoInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') buscarPorCodigo(); });
+          document.getElementById('btnBuscar')?.addEventListener('click', buscarPorCodigo);
+        });
+
+        // Simple hover effect for scan history rows
+        document.querySelectorAll('.divide-y > div').forEach(row => {
+            row.addEventListener('click', () => {
+                row.classList.add('bg-primary/5');
+                setTimeout(() => row.classList.remove('bg-primary/5'), 200);
+            });
+        });
+
+        console.log("TIC y Stock: QR Scanner Active");
+    </script>
+</body></html>

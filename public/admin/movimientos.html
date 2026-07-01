@@ -1,34 +1,275 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movimientos — TIC & Stock</title>
-  <link rel="stylesheet" href="/css/style.css">
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TIC y Stock - Movimientos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+darkMode: "class",
+theme: { extend: {
+colors: {
+"sidebar-bg": "#0F172A", "primary": "#00288e", "primary-container": "#1e40af",
+"text-main": "#1E293B", "text-muted": "#64748B", "border-default": "#E2E8F0",
+"surface": "#f7f9fb", "surface-container-lowest": "#ffffff",
+"surface-container-low": "#f2f4f6", "surface-bright": "#f7f9fb",
+"success": "#10B981", "danger": "#EF4444", "info": "#3B82F6", "error": "#ba1a1a",
+"outline": "#757684", "outline-variant": "#c4c5d5",
+"on-surface": "#191c1e", "on-surface-variant": "#444653",
+"on-primary": "#ffffff", "on-primary-fixed-variant": "#173bab", "on-primary-fixed": "#001453"
+},
+borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+spacing: {
+"sidebar-width": "260px", "container-max": "1280px",
+"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px", "gutter": "24px", "base": "4px"
+},
+fontFamily: {
+"body-md": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Inter"],
+"headline-lg": ["Inter"], "display-lg": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"]
+},
+fontSize: {
+"display-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}],
+"headline-lg": ["24px", {lineHeight: "32px", fontWeight: "700"}],
+"headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}],
+"title-md": ["16px", {lineHeight: "24px", fontWeight: "500"}],
+"body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}],
+"body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}],
+"label-md": ["12px", {lineHeight: "12px", letterSpacing: "0.05em", fontWeight: "600"}]
+}
+} }
+}
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+.sidebar-active { border-left: 4px solid #3B82F6; background-color: rgba(255, 255, 255, 0.05); color: #3B82F6; font-weight: 700; }
+</style>
 </head>
-<body>
-  <header>
-    <h1>TIC & Stock</h1>
-    <nav>
-      <a href="/admin/inventario.html">Inventario</a>
-      <a href="/admin/movimientos.html" class="active">Movimientos</a>
-      <a href="/admin/alertas.html">Alertas</a>
-      <a href="#" id="logoutBtn">Cerrar sesión</a>
-    </nav>
-  </header>
-  <main>
-    <h2 style="margin-bottom:16px;">Historial de Movimientos</h2>
-    <div class="filters">
-      <select id="tipoFilter" onchange="cargarMovimientos()">
-        <option value="">Todos los tipos</option>
-        <option value="retiro">Retiros</option>
-        <option value="devolucion">Devoluciones</option>
-      </select>
-      <input type="text" id="searchInput" placeholder="ID de ítem..." oninput="cargarMovimientos()">
-    </div>
-    <div id="loading" class="loading"><div class="spinner"></div></div>
-    <div id="tableContainer"></div>
-  </main>
-  <script src="/js/admin-movimientos.js"></script>
-</body>
-</html>
+<body class="flex min-h-screen text-on-surface bg-surface-bright">
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-sidebar-bg flex flex-col py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-white tracking-tight">TIC y Stock</h1>
+<p class="text-body-sm text-on-primary-fixed-variant opacity-60">Admin TIC</p>
+</div>
+<nav class="flex-grow space-y-xs">
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="inventario.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Inventario</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md sidebar-active transition-colors duration-150" href="movimientos.html">
+<span class="material-symbols-outlined">swap_horiz</span>
+<span class="font-body-md text-body-md">Movimientos</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="alertas.html">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-body-md text-body-md">Alertas</span>
+</a>
+</nav>
+<div class="mt-auto px-lg pt-lg border-t border-white/10">
+<div class="flex items-center gap-md p-sm rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-info">admin_panel_settings</span>
+</div>
+<div class="overflow-hidden flex-1">
+<p class="font-title-md text-title-md text-white truncate">Superusuario</p>
+<div class="flex items-center gap-xs text-on-primary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-sm" onclick="cerrarSesion()">logout</span>
+<span class="text-body-sm cursor-pointer hover:text-white transition-colors" onclick="cerrarSesion()">Cerrar Sesión</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-sidebar-width flex-grow min-h-screen overflow-hidden">
+<header class="flex justify-between items-center w-full px-lg py-sm border-b border-border-default bg-surface-bright z-40">
+<div class="flex items-center gap-sm">
+<span class="text-text-muted text-body-sm">Admin</span>
+<span class="material-symbols-outlined text-text-muted text-[16px]">chevron_right</span>
+<span class="text-primary font-bold text-body-md">Movimientos</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-text-muted hover:text-primary transition-colors" onclick="cerrarSesion()">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-lg">
+<div class="max-w-container-max mx-auto space-y-lg">
+<section class="bg-surface p-md rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-border-default">
+<div class="flex flex-wrap items-end gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-text-muted">Fecha Desde</label>
+<input id="fechaDesde" class="border border-outline-variant rounded px-sm py-xs text-body-md focus:ring-primary focus:border-primary" type="date"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-text-muted">Fecha Hasta</label>
+<input id="fechaHasta" class="border border-outline-variant rounded px-sm py-xs text-body-md focus:ring-primary focus:border-primary" type="date"/>
+</div>
+<div class="flex flex-col gap-xs min-w-[200px]">
+<label class="font-label-md text-label-md text-text-muted">Tipo de Movimiento</label>
+<select id="tipoFilter" class="border border-outline-variant rounded px-sm py-xs text-body-md focus:ring-primary focus:border-primary appearance-none bg-no-repeat bg-[right_8px_center]">
+<option value="Todos">Todos</option>
+<option value="Retiro">Retiro</option>
+<option value="Devolución">Devolución</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs min-w-[240px]">
+<label class="font-label-md text-label-md text-text-muted">Usuario</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-text-muted text-[18px]" data-icon="person_search">person_search</span>
+<input id="usuarioFilter" class="w-full pl-xl border border-outline-variant rounded px-sm py-xs text-body-md focus:ring-primary focus:border-primary" placeholder="Filtrar por usuario..." type="text"/>
+</div>
+</div>
+<div class="ml-auto flex items-center gap-sm">
+<button class="bg-primary text-on-primary px-md py-xs rounded flex items-center gap-xs font-title-md text-title-md hover:bg-primary-container active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_download">file_download</span>
+                            Exportar CSV
+                        </button>
+<button class="border border-outline-variant text-text-main px-md py-xs rounded flex items-center gap-xs font-title-md text-title-md hover:bg-surface-container-high active:scale-95 transition-all" onclick="limpiarFiltros()">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                            Limpiar
+                        </button>
+</div>
+</div>
+</section>
+<!-- Table Section -->
+<section class="bg-surface rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-border-default overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-border-default">
+<tr>
+<th class="px-md py-sm font-label-md text-label-md text-text-muted">FECHA</th>
+<th class="px-md py-sm font-label-md text-label-md text-text-muted">USUARIO</th>
+<th class="px-md py-sm font-label-md text-label-md text-text-muted">ITEM</th>
+<th class="px-md py-sm font-label-md text-label-md text-text-muted">TIPO</th>
+<th class="px-md py-sm font-label-md text-label-md text-text-muted">DETALLE</th>
+<th class="px-md py-sm"></th>
+</tr>
+</thead>
+<tbody id="movimientosBody" class="divide-y divide-border-default">
+<tr><td colspan="6" class="px-md py-md text-center text-text-muted">Cargando...</td></tr>
+</tbody>
+</table>
+<!-- Pagination Component -->
+<div class="bg-surface-container-low px-lg py-md border-t border-border-default flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-text-muted">Mostrando 1-10 de 1,248 movimientos</span>
+<div class="flex items-center gap-xs">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-white text-text-muted disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-body-sm text-body-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-white text-text-main font-body-sm text-body-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-white text-text-main font-body-sm text-body-sm">3</button>
+<span class="px-xs text-text-muted">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-white text-text-main font-body-sm text-body-sm">125</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-white text-text-muted">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Footer Component -->
+<footer class="w-full py-md bg-surface-container-low border-t border-border-default flex justify-between items-center px-lg shrink-0">
+<span class="font-label-md text-label-md text-text-muted">© 2026 TIC y Stock — Sistema de Gestión Institucional</span>
+<div class="flex gap-md">
+<a class="font-body-sm text-body-sm text-text-muted hover:text-primary transition-colors" href="#">Privacidad</a>
+<a class="font-body-sm text-body-sm text-text-muted hover:text-primary transition-colors" href="#">Soporte</a>
+<a class="font-body-sm text-body-sm text-text-muted hover:text-primary transition-colors" href="#">Documentación</a>
+</div>
+</footer>
+</main>
+<script>
+        const h = (s) => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+        function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+        async function verificarSesion() {
+            const res = await fetch('/api/auth/me');
+            const data = await res.json();
+            if (!data.success || data.data.rol !== 'superusuario') window.location.href = '/login.html';
+        }
+
+        async function cargarMovimientos() {
+            const tbody = document.getElementById('movimientosBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-md py-md text-center text-text-muted">Cargando...</td></tr>';
+            const params = new URLSearchParams();
+            const tipo = document.getElementById('tipoFilter')?.value;
+            if (tipo && tipo !== 'Todos') params.set('tipo', tipo.toLowerCase());
+            const q = document.getElementById('searchInput')?.value.trim();
+            if (q) params.set('busqueda', q);
+            const fd = document.getElementById('fechaDesde')?.value;
+            if (fd) params.set('fecha_desde', fd);
+            const fh = document.getElementById('fechaHasta')?.value;
+            if (fh) params.set('fecha_hasta', fh);
+            const usuario = document.getElementById('usuarioFilter')?.value.trim();
+            if (usuario) params.set('usuario', usuario);
+            try {
+                const res = await fetch(`/api/movimientos?${params}`);
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message);
+                const movs = data.data;
+                if (movs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-md py-md text-center text-text-muted">No hay movimientos</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = movs.map(m => {
+                    const isRetiro = m.tipo === 'retiro';
+                    return `<tr class="hover:bg-surface-container-low transition-colors group">
+                        <td class="px-md py-md font-body-md text-body-md text-text-main">${new Date(m.fecha_hora).toLocaleString()}</td>
+                        <td class="px-md py-md"><div class="flex items-center gap-sm"><div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden"></div><span class="font-body-md text-body-md text-text-main font-medium">${h(m.usuario_nombre || '—')}</span></div></td>
+                        <td class="px-md py-md font-body-md text-body-md text-text-main">${h(m.item_nombre)}</td>
+                        <td class="px-md py-md"><span class="${isRetiro ? 'bg-orange-100 text-orange-700' : 'bg-success text-white'} px-sm py-xs rounded-full text-[10px] font-bold uppercase tracking-wider">${h(m.tipo)}</span></td>
+                        <td class="px-md py-md font-body-md text-body-md text-text-muted italic max-w-xs truncate">${h(m.codigo_escaneado || '—')}</td>
+                        <td class="px-md py-md text-right"><span class="px-sm py-xs ${m.devuelto ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'} rounded-full text-[10px] font-bold uppercase">${m.devuelto ? 'Devuelto' : 'Pendiente'}</span></td>
+                    </tr>`;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-md py-md text-center text-danger">Error: ${h(err.message)}</td></tr>`;
+            }
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('fechaDesde').value = '';
+            document.getElementById('fechaHasta').value = '';
+            document.getElementById('tipoFilter').value = 'Todos';
+            document.getElementById('usuarioFilter').value = '';
+            cargarMovimientos();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await verificarSesion();
+            await cargarMovimientos();
+            document.getElementById('searchInput')?.addEventListener('input', debounce(cargarMovimientos, 300));
+            document.getElementById('tipoFilter')?.addEventListener('change', cargarMovimientos);
+            document.getElementById('fechaDesde')?.addEventListener('change', cargarMovimientos);
+            document.getElementById('fechaHasta')?.addEventListener('change', cargarMovimientos);
+            document.getElementById('usuarioFilter')?.addEventListener('input', debounce(cargarMovimientos, 300));
+            const logoutBtns = document.querySelectorAll('[data-icon="logout"]');
+            logoutBtns.forEach(btn => btn.closest('button')?.addEventListener('click', cerrarSesion));
+        });
+
+        async function cerrarSesion() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login.html';
+        }
+
+        // Micro-interactions for button scales
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('scale-95'));
+        });
+
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            if (!input.value) input.value = today;
+        });
+    </script>
+</body></html>

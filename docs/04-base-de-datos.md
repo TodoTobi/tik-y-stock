@@ -15,7 +15,7 @@
 │ id (PK)      │◄────┐ │ id (PK)          │
 │ nombre       │     │ │ nombre           │
 │ email (UQ)   │     │ │ categoria        │
-│ contraseña   │     │ │ cantidad         │
+│ password_hash │     │ │ cantidad         │
 │ rol          │     │ │ estado           │
 │ fecha_creac  │     │ │ observaciones    │
 └──────────────┘     │ │ foto_url         │
@@ -133,8 +133,10 @@ COMMIT;
 
 ### Usuarios de prueba
 - **admin@ticstock.edu** / admin123 (superusuario)
-- **docente@taller.edu** / docente123 (superusuario)
-- 3 alumnos con contraseña alumno123
+- **docente@taller.edu** / admin123 (superusuario)
+- **alumno1@estudiante.edu** / admin123 (usuario)
+- **alumno2@estudiante.edu** / admin123 (usuario)
+- **alumno3@estudiante.edu** / admin123 (usuario)
 
 ### Ítems de ejemplo (15-20)
 Kits Arduino, multímetros, protoboards, sensores ultrasónicos, cables jumper, soldadores, osciloscopios, fuentes, motores paso a paso, displays LCD, resistencias, capacitores, LEDs, breadboards, etc.

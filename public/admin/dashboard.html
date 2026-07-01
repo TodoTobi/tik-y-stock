@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TIC y Stock - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+darkMode: "class",
+theme: { extend: {
+colors: {
+"sidebar-bg": "#0F172A", "primary": "#00288e", "primary-container": "#1e40af",
+"text-main": "#1E293B", "text-muted": "#64748B", "border-default": "#E2E8F0",
+"surface": "#f7f9fb", "surface-container-lowest": "#ffffff",
+"surface-container-low": "#f2f4f6", "surface-bright": "#f7f9fb",
+"success": "#10B981", "danger": "#EF4444", "info": "#3B82F6", "error": "#ba1a1a",
+"outline": "#757684", "outline-variant": "#c4c5d5",
+"on-surface": "#191c1e", "on-surface-variant": "#444653",
+"on-primary": "#ffffff", "on-primary-fixed-variant": "#173bab", "on-primary-fixed": "#001453"
+},
+borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+spacing: {
+"sidebar-width": "260px", "container-max": "1280px",
+"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px", "gutter": "24px", "base": "4px"
+},
+fontFamily: {
+"body-md": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Inter"],
+"headline-lg": ["Inter"], "display-lg": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"]
+},
+fontSize: {
+"display-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}],
+"headline-lg": ["24px", {lineHeight: "32px", fontWeight: "700"}],
+"headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}],
+"title-md": ["16px", {lineHeight: "24px", fontWeight: "500"}],
+"body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}],
+"body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}],
+"label-md": ["12px", {lineHeight: "12px", letterSpacing: "0.05em", fontWeight: "600"}]
+}
+} }
+}
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+.sidebar-active { border-left: 4px solid #3B82F6; background-color: rgba(255, 255, 255, 0.05); color: #3B82F6; font-weight: 700; }
+.pulse-amber { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+</style>
+</head>
+<body class="flex min-h-screen text-on-surface bg-surface-bright">
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-sidebar-bg flex flex-col py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-white tracking-tight">TIC y Stock</h1>
+<p class="text-body-sm text-on-primary-fixed-variant opacity-60">Admin TIC</p>
+</div>
+<nav class="flex-grow space-y-xs">
+<a class="flex items-center gap-md px-lg py-md sidebar-active transition-colors duration-150" href="dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="inventario.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Inventario</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="movimientos.html">
+<span class="material-symbols-outlined">swap_horiz</span>
+<span class="font-body-md text-body-md">Movimientos</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="alertas.html">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-body-md text-body-md">Alertas</span>
+</a>
+</nav>
+<div class="mt-auto px-lg pt-lg border-t border-white/10">
+<div class="flex items-center gap-md p-sm rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-info">admin_panel_settings</span>
+</div>
+<div class="overflow-hidden flex-1">
+<p class="font-title-md text-title-md text-white truncate">Superusuario</p>
+<div class="flex items-center gap-xs text-on-primary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-sm" onclick="cerrarSesion()">logout</span>
+<span class="text-body-sm cursor-pointer hover:text-white transition-colors" onclick="cerrarSesion()">Cerrar Sesión</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-sidebar-width flex-grow min-h-screen overflow-hidden">
+<header class="flex justify-between items-center w-full px-lg py-sm border-b border-border-default bg-surface-bright z-40">
+<div class="flex items-center gap-sm">
+<span class="text-text-muted text-body-sm">Admin</span>
+<span class="material-symbols-outlined text-text-muted text-[16px]">chevron_right</span>
+<span class="text-primary font-bold text-body-md">Dashboard</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-text-muted hover:text-primary transition-colors" onclick="cerrarSesion()">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-lg">
+<div class="max-w-[1400px] mx-auto space-y-lg">
+<!-- Metric Cards Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Total Items -->
+<div class="bg-surface-container-lowest border border-border-default border-t-[3px] border-t-primary-container p-lg rounded-lg shadow-sm flex flex-col gap-sm hover:scale-[1.02] transition-transform duration-150">
+<div class="flex justify-between items-start">
+<div class="p-sm bg-primary-container/10 text-primary-container rounded-lg">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<span class="flex items-center text-success text-label-md font-label-md">
+<span class="material-symbols-outlined text-xs mr-xs">trending_up</span>
+                                +3%
+                            </span>
+</div>
+<div class="mt-sm">
+<span class="text-display-lg font-display-lg block">&mdash;</span>
+<span class="text-text-muted text-body-md font-body-md">Total Items</span>
+</div>
+</div>
+<!-- Disponibles -->
+<div class="bg-surface-container-lowest border border-border-default border-t-[3px] border-t-success p-lg rounded-lg shadow-sm flex flex-col gap-sm hover:scale-[1.02] transition-transform duration-150">
+<div class="flex justify-between items-start">
+<div class="p-sm bg-success/10 text-success rounded-lg">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+</div>
+<div class="mt-sm">
+<span class="text-display-lg font-display-lg block">&mdash;</span>
+<span class="text-text-muted text-body-md font-body-md">Disponibles</span>
+</div>
+<div class="mt-auto text-body-sm text-text-muted">
+<span class="font-bold text-success">63%</span> del total
+                        </div>
+</div>
+<!-- Préstamos Activos -->
+<div class="bg-surface-container-lowest border border-border-default border-t-[3px] border-t-info p-lg rounded-lg shadow-sm flex flex-col gap-sm hover:scale-[1.02] transition-transform duration-150">
+<div class="flex justify-between items-start">
+<div class="p-sm bg-info/10 text-info rounded-lg">
+<span class="material-symbols-outlined">swap_horiz</span>
+</div>
+</div>
+<div class="mt-sm">
+<span class="text-display-lg font-display-lg block">&mdash;</span>
+<span class="text-text-muted text-body-md font-body-md">Préstamos Activos</span>
+</div>
+<div class="mt-auto text-body-sm text-text-muted">
+<span class="font-bold text-primary">4</span> vencen hoy
+                        </div>
+</div>
+<!-- Alertas -->
+<div class="bg-surface-container-lowest border border-border-default border-t-[3px] border-t-on-tertiary-container p-lg rounded-lg shadow-sm flex flex-col gap-sm hover:scale-[1.02] transition-transform duration-150 relative overflow-hidden">
+<div class="flex justify-between items-start">
+<div class="p-sm bg-on-tertiary-container/10 text-on-tertiary-container rounded-lg">
+<span class="material-symbols-outlined">notifications_active</span>
+</div>
+<div class="w-3 h-3 bg-on-tertiary-container rounded-full pulse-amber"></div>
+</div>
+<div class="mt-sm">
+<span class="text-display-lg font-display-lg block">&mdash;</span>
+<span class="text-text-muted text-body-md font-body-md">Alertas Críticas</span>
+</div>
+<div class="mt-auto text-body-sm text-on-tertiary-container font-semibold">
+                            Acción requerida inmediata
+                        </div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-lg items-start">
+<!-- Left Column: Últimos Movimientos -->
+<div class="lg:col-span-3 bg-surface-container-lowest border border-border-default rounded-lg shadow-sm overflow-hidden flex flex-col">
+<div class="px-lg py-md border-b border-border-default flex items-center justify-between">
+<h2 class="text-headline-md font-headline-md text-text-main">Últimos Movimientos</h2>
+<button class="text-primary text-body-sm font-semibold hover:underline">Ver todos</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-text-muted text-label-md font-label-md uppercase tracking-wider">
+<tr>
+<th class="px-lg py-md">Fecha</th>
+<th class="px-lg py-md">Usuario</th>
+<th class="px-lg py-md">Item</th>
+<th class="px-lg py-md">Tipo</th>
+<th class="px-lg py-md">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-lg py-md text-body-md text-text-muted">Hoy, 10:45 AM</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-7 h-7 rounded-full bg-surface-dim"></div>
+<span class="text-body-md font-medium">Carlos Ruiz</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md">Laptop HP EliteBook #04</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs bg-primary-container text-white text-[10px] font-bold rounded uppercase">Retiro</span>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm text-body-md">
+<span class="w-2 h-2 rounded-full bg-success"></span> Activo
+                                            </div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-lg py-md text-body-md text-text-muted">Hoy, 09:12 AM</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-7 h-7 rounded-full bg-surface-dim"></div>
+<span class="text-body-md font-medium">Ana Martínez</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md">Proyector Epson EB-S41</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs bg-success text-white text-[10px] font-bold rounded uppercase">Devolución</span>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm text-body-md">
+<span class="w-2 h-2 rounded-full bg-primary"></span> Completado
+                                            </div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-lg py-md text-body-md text-text-muted">Ayer, 16:30 PM</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-7 h-7 rounded-full bg-surface-dim"></div>
+<span class="text-body-md font-medium">Jorge Soto</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md">iPad Air Gen 5 #12</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs bg-primary-container text-white text-[10px] font-bold rounded uppercase">Retiro</span>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm text-body-md text-error font-medium">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span> Atrasado
+                                            </div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-lg py-md text-body-md text-text-muted">Ayer, 14:00 PM</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-7 h-7 rounded-full bg-surface-dim"></div>
+<span class="text-body-md font-medium">Lucía Gómez</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md">Cámara Sony Alpha A7</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs bg-success text-white text-[10px] font-bold rounded uppercase">Devolución</span>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm text-body-md">
+<span class="w-2 h-2 rounded-full bg-primary"></span> Completado
+                                            </div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-lg py-md text-body-md text-text-muted">Ayer, 08:45 AM</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-7 h-7 rounded-full bg-surface-dim"></div>
+<span class="text-body-md font-medium">Roberto Díaz</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md">Kit Micrófono Røde</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs bg-primary-container text-white text-[10px] font-bold rounded uppercase">Retiro</span>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm text-body-md">
+<span class="w-2 h-2 rounded-full bg-success"></span> Activo
+                                            </div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Column: Items Más Prestados -->
+<div class="bg-surface-container-lowest border border-border-default rounded-lg shadow-sm p-lg">
+<div class="flex flex-col gap-lg">
+<div>
+<h2 class="text-headline-md font-headline-md text-text-main">Items Más Prestados</h2>
+<p class="text-body-sm text-text-muted mt-xs">Basado en los últimos 30 días</p>
+</div>
+<div class="space-y-md">
+<!-- Laptop -->
+<div class="space-y-xs">
+<div class="flex justify-between text-body-md">
+<span class="font-medium">Laptops HP</span>
+<span class="text-text-muted">28 préstamos</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 90%;"></div>
+</div>
+</div>
+<!-- Cámaras -->
+<div class="space-y-xs">
+<div class="flex justify-between text-body-md">
+<span class="font-medium">Cámaras Sony</span>
+<span class="text-text-muted">19 préstamos</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Ipads -->
+<div class="space-y-xs">
+<div class="flex justify-between text-body-md">
+<span class="font-medium">iPads Pro</span>
+<span class="text-text-muted">14 préstamos</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 48%;"></div>
+</div>
+</div>
+<!-- Proyectores -->
+<div class="space-y-xs">
+<div class="flex justify-between text-body-md">
+<span class="font-medium">Proyectores</span>
+<span class="text-text-muted">11 préstamos</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 38%;"></div>
+</div>
+</div>
+<!-- Micrófonos -->
+<div class="space-y-xs">
+<div class="flex justify-between text-body-md">
+<span class="font-medium">Micrófonos Røde</span>
+<span class="text-text-muted">8 préstamos</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 25%;"></div>
+</div>
+</div>
+</div>
+<div class="pt-lg border-t border-border-default mt-md">
+<div class="p-md bg-info/5 rounded-lg border border-info/20">
+<div class="flex gap-sm">
+<span class="material-symbols-outlined text-info">lightbulb</span>
+<p class="text-body-sm text-text-main leading-relaxed">
+                                            Considera adquirir <span class="font-bold">2 Laptops</span> adicionales para cubrir la demanda de exámenes.
+                                        </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-border-default py-md px-lg flex items-center justify-between text-label-md font-label-md text-text-muted">
+<div class="flex items-center gap-md">
+<span class="font-bold text-primary">TIC y Stock</span>
+<span>© 2026 - Sistema de Gestión Institucional</span>
+</div>
+<div class="flex gap-lg">
+<a class="hover:text-primary transition-colors" href="#">Soporte Técnico</a>
+<a class="hover:text-primary transition-colors" href="#">Manual de Usuario</a>
+<a class="hover:text-primary transition-colors" href="#">Políticas de Seguridad</a>
+</div>
+</footer>
+</main>
+<!-- FAB Contextual -->
+<button class="fixed bottom-xl right-xl bg-primary text-white p-lg rounded-full shadow-lg hover:scale-105 transition-transform group flex items-center gap-sm active:scale-95">
+<span class="material-symbols-outlined">add</span>
+<span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-semibold whitespace-nowrap">Nuevo Item</span>
+</button>
+<script>
+        // Simple micro-interaction for active menu
+        document.querySelectorAll('aside nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('aside nav a').forEach(l => {
+                    l.classList.remove('text-info', 'bg-surface-container-highest/10', 'border-l-[3px]', 'border-info');
+                    l.classList.add('text-outline-variant/70');
+                    l.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 0";
+                });
+                this.classList.add('text-info', 'bg-surface-container-highest/10', 'border-l-[3px]', 'border-info');
+                this.classList.remove('text-outline-variant/70');
+                this.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+            });
+        });
+
+        const h = (s) => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+        // Session verification & data loading
+        (async function() {
+            const res = await fetch('/api/auth/me');
+            const data = await res.json();
+            if (!data.success || data.data.rol !== 'superusuario') {
+                window.location.href = '/login.html';
+                return;
+            }
+            try {
+                const itemsRes = await fetch('/api/items');
+                const itemsData = await itemsRes.json();
+                if (itemsData.success) {
+                    const items = itemsData.data;
+                    const total = items.length;
+                    const disponibles = items.filter(i => i.cantidad > 0 && i.estado === 'disponible').length;
+                    const prestados = items.filter(i => i.estado === 'en_uso' || i.cantidad === 0).length;
+                    document.querySelectorAll('.text-display-lg')[0].textContent = total;
+                    document.querySelectorAll('.text-display-lg')[1].textContent = disponibles;
+                    document.querySelectorAll('.text-display-lg')[2].textContent = prestados;
+                    document.querySelectorAll('.text-display-lg')[3].textContent = '\u2014';
+                    const pct = total > 0 ? Math.round((disponibles / total) * 100) : 0;
+                    const pctEl = document.querySelector('.font-bold.text-success');
+                    if (pctEl) pctEl.textContent = pct + '%';
+                }
+            } catch {}
+            try {
+                const movRes = await fetch('/api/movimientos');
+                const movData = await movRes.json();
+                if (movData.success && movData.data.length > 0) {
+                    const tbody = document.querySelector('tbody');
+                    if (tbody) {
+                        tbody.innerHTML = movData.data.slice(0, 5).map(m => {
+                            const isRetiro = m.tipo === 'retiro';
+                            return `<tr class="hover:bg-surface-container-low transition-colors duration-150">
+                                <td class="px-lg py-md text-body-md text-text-muted">${new Date(m.fecha_hora).toLocaleString()}</td>
+                                <td class="px-lg py-md"><div class="flex items-center gap-sm"><div class="w-7 h-7 rounded-full bg-surface-dim"></div><span class="text-body-md font-medium">${h(m.usuario_nombre || '\u2014')}</span></div></td>
+                                <td class="px-lg py-md text-body-md">${h(m.item_nombre)}</td>
+                                <td class="px-lg py-md"><span class="px-sm py-xs ${isRetiro ? 'bg-primary-container' : 'bg-success'} text-white text-[10px] font-bold rounded uppercase">${h(m.tipo)}</span></td>
+                                <td class="px-lg py-md"><div class="flex items-center gap-sm text-body-md"><span class="w-2 h-2 rounded-full ${m.devuelto ? 'bg-primary' : 'bg-success'}"></span> ${m.devuelto ? 'Completado' : 'Activo'}</div></td>
+                            </tr>`;
+                        }).join('');
+                    }
+                }
+            } catch {}
+            try {
+                const alertRes = await fetch('/api/alertas');
+                const alertData = await alertRes.json();
+                if (alertData.success) {
+                    const count3 = document.querySelectorAll('.text-display-lg');
+                    if (count3.length > 3) count3[3].textContent = alertData.data.length;
+                    const badge = document.querySelector('.bg-on-tertiary-container\\/10');
+                    if (badge && badge.nextElementSibling) badge.nextElementSibling.textContent = alertData.data.length;
+                }
+            } catch {}
+        })();
+    </script>
+</body></html>

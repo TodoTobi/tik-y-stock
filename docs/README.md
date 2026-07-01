@@ -34,11 +34,12 @@ Monolito en 3 capas (Presentación → Lógica → Datos) con Express sirviendo 
 
 ## Enlaces del sistema
 
-- `http://localhost:3000/login.html` — Login
-- `http://localhost:3000/registro.html` — Registro
-- `http://localhost:3000/admin/movimientos.html` — Panel principal (superusuario, redirige desde /admin)
-- `http://localhost:3000/admin/inventario.html` — Gestión inventario (superusuario)
-- `http://localhost:3000/admin/movimientos.html` — Historial movimientos (superusuario)
-- `http://localhost:3000/usuario/catalogo.html` — Catálogo (usuario)
-- `http://localhost:3000/usuario/escaneo.html` — Escaneo QR (usuario)
-- `http://localhost:3000/usuario/prestamos.html` — Mis préstamos (usuario)
+- `http://localhost:4000/login.html` — Login
+- `http://localhost:4000/registro.html` — Registro
+- `http://localhost:4000/admin/dashboard.html` — Dashboard admin (superusuario)
+- `http://localhost:4000/admin/inventario.html` — Gestión inventario (superusuario)
+- `http://localhost:4000/admin/movimientos.html` — Historial movimientos (superusuario)
+- `http://localhost:4000/admin/alertas.html` — Alertas y resolución (superusuario)
+- `http://localhost:4000/usuario/catalogo.html` — Catálogo (usuario)
+- `http://localhost:4000/usuario/escaneo.html` — Escaneo QR (usuario)
+- `http://localhost:4000/usuario/prestamos.html` — Mis préstamos (usuario)

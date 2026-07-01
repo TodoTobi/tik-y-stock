@@ -60,11 +60,11 @@ describe('Movimientos', () => {
     }
   });
 
-  it('Devolución de otro usuario - 400', async () => {
+  it('Devolución de otro usuario - 403', async () => {
     const prestamos = await user1Agent.get('/api/movimientos/mis-prestamos');
     if (prestamos.body.data.length > 0) {
       const res = await user2Agent.post('/api/movimientos/devolucion').send({ id_movimiento: prestamos.body.data[0].id });
-      assert.ok(res.status === 400 || res.status === 403);
+      assert.equal(res.status, 403);
       assert.equal(res.body.success, false);
     }
   });
@@ -79,5 +79,24 @@ describe('Movimientos', () => {
     const res = await user1Agent.get('/api/movimientos/mis-prestamos');
     assert.equal(res.status, 200);
     assert.ok(Array.isArray(res.body.data));
+  });
+
+  it('Concurrencia 10 retiros simultáneos - RNF-01', async () => {
+    const itemRes = await superAgent.post('/api/items').send({
+      nombre: 'Item Concurrencia', categoria: 'Test', cantidad: 10, codigo_escaneable: 'CONC-10'
+    });
+    assert.equal(itemRes.status, 201);
+    const itemId = itemRes.body.data.id;
+    const promises = Array.from({ length: 10 }, (_, i) =>
+      user1Agent.post('/api/movimientos/retiro').send({ id_item: itemId })
+    );
+    const start = Date.now();
+    const results = await Promise.all(promises);
+    const elapsed = Date.now() - start;
+    const allSuccess = results.every(r => r.status === 201);
+    assert.ok(allSuccess, `Fallo: ${results.filter(r => r.status !== 201).length} retiros no exitosos`);
+    const checkRes = await superAgent.get(`/api/items/${itemId}`);
+    assert.equal(checkRes.body.data.cantidad, 0);
+    assert.ok(elapsed < 5000, `Tiempo promedio excedido: ${(elapsed / 10).toFixed(0)}ms`);
   });
 });

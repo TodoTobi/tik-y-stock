@@ -1,47 +1,285 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo — TIC & Stock</title>
-  <link rel="stylesheet" href="/css/style.css">
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventario Escolar - Catálogo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "border-default": "#E2E8F0",
+                "primary-fixed": "#dde1ff",
+                "outline-variant": "#c4c5d5",
+                "on-background": "#191c1e",
+                "surface-bright": "#f7f9fb",
+                "tertiary-fixed-dim": "#ffb95f",
+                "primary-container": "#1e40af",
+                "inverse-surface": "#2d3133",
+                "text-main": "#1E293B",
+                "on-primary-fixed-variant": "#173bab",
+                "on-error": "#ffffff",
+                "error": "#ba1a1a",
+                "outline": "#757684",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-high": "#e6e8ea",
+                "secondary-container": "#76dcff",
+                "on-secondary": "#ffffff",
+                "on-error-container": "#93000a",
+                "on-secondary-fixed": "#001f28",
+                "danger": "#EF4444",
+                "background": "#f7f9fb",
+                "surface-tint": "#3755c3",
+                "success": "#10B981",
+                "tertiary-container": "#6b4200",
+                "surface-container-highest": "#e0e3e5",
+                "on-surface-variant": "#444653",
+                "text-muted": "#64748B",
+                "secondary": "#006780",
+                "surface": "#f7f9fb",
+                "tertiary-fixed": "#ffddb8",
+                "surface-variant": "#e0e3e5",
+                "on-tertiary-fixed": "#2a1700",
+                "on-surface": "#191c1e",
+                "on-secondary-container": "#006077",
+                "secondary-fixed": "#b7eaff",
+                "primary": "#00288e",
+                "surface-container-low": "#f2f4f6",
+                "error-container": "#ffdad6",
+                "sidebar-bg": "#0F172A",
+                "on-tertiary-fixed-variant": "#653e00",
+                "secondary-fixed-dim": "#6cd3f7",
+                "primary-fixed-dim": "#b8c4ff",
+                "surface-container": "#eceef0",
+                "on-tertiary-container": "#ffa929",
+                "inverse-on-surface": "#eff1f3",
+                "on-primary-fixed": "#001453",
+                "inverse-primary": "#b8c4ff",
+                "surface-dim": "#d8dadc",
+                "on-primary-container": "#a8b8ff",
+                "on-primary": "#ffffff",
+                "on-secondary-fixed-variant": "#004e61",
+                "tertiary": "#4c2e00",
+                "info": "#3B82F6",
+                "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "xl": "32px",
+                "xs": "4px",
+                "base": "4px",
+                "sidebar-width": "260px",
+                "md": "16px",
+                "gutter": "24px",
+                "sm": "8px",
+                "sidebar-collapsed": "64px",
+                "lg": "24px",
+                "container-max": "1280px"
+            },
+            "fontFamily": {
+                "body-sm": ["Inter"],
+                "title-md": ["Inter"],
+                "body-md": ["Inter"],
+                "display-lg": ["Inter"],
+                "headline-md": ["Inter"],
+                "headline-lg": ["Inter"],
+                "label-md": ["Inter"]
+            },
+            "fontSize": {
+                "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "label-md": ["12px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .sidebar-active { border-left: 4px solid #3B82F6; background-color: rgba(255, 255, 255, 0.05); color: #3B82F6; font-weight: 700; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .card-hover:hover { transform: translateY(-4px); transition: all 0.2s ease; }
+    </style>
 </head>
-<body>
-  <header>
-    <h1>TIC & Stock</h1>
-    <nav>
-      <a href="/usuario/catalogo.html" class="active">Catálogo</a>
-      <a href="/usuario/escaneo.html">Escanear</a>
-      <a href="/usuario/prestamos.html">Mis Préstamos</a>
-      <a href="#" id="logoutBtn">Cerrar sesión</a>
-    </nav>
-  </header>
-  <main>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <h2>Catálogo de Inventario</h2>
-      <span id="summary" style="font-size:14px;color:#666;"></span>
-    </div>
-    <div class="filters">
-      <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." oninput="cargarCatalogo()">
-      <select id="categoriaFilter" onchange="cargarCatalogo()"><option value="">Todas</option></select>
-      <label style="font-size:14px;display:flex;align-items:center;gap:4px;">
-        <input type="checkbox" id="soloDisponibles" onchange="cargarCatalogo()"> Solo disponibles
-      </label>
-    </div>
-    <div id="loading" class="loading"><div class="spinner"></div></div>
-    <div id="gridContainer" class="card-grid"></div>
-  </main>
+<body class="flex min-h-screen text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-sidebar-bg flex flex-col py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-white tracking-tight">Inventario Escolar</h1>
+<p class="text-body-sm text-on-primary-fixed-variant opacity-60">Gesti&oacute;n Acad&eacute;mica</p>
+</div>
+<nav class="flex-grow space-y-xs">
+<a class="flex items-center gap-md px-lg py-md sidebar-active transition-colors duration-150" href="catalogo.html">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-body-md text-body-md">Cat&aacute;logo</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="escaneo.html">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="font-body-md text-body-md">Escanear</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="prestamos.html">
+<span class="material-symbols-outlined" data-icon="handshake">handshake</span>
+<span class="font-body-md text-body-md">Mis Pr&eacute;stamos</span>
+</a>
+</nav>
+<div class="mt-auto px-lg pt-lg border-t border-white/10">
+<div class="flex items-center gap-md p-sm rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of a young university student in a well-lit campus setting, wearing a clean academic uniform. The lighting is soft and natural, emphasizing a studious and reliable atmosphere. The background is slightly blurred showing modern educational architecture in a high-key, light-mode aesthetic with blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7LrrCgAGoc8-iMjuySJnxyXUmW1Gq9GZ3gOqPDdbE3vDZo7b2Vch3osHqnt-hgLOiWhqfuG9dU7Z6xGGeF1bdHvmW2uZhw2uBkGUxMmBFkCsmNYV_riGWezrMaShB_iVf9EQ0iPrm4tdASaEvihU_2fi8_X-IKfTZVkFvWNbygxbUZ3szPkF0i-UeSQ_tLIskwVLncwBmc6G_9PQLgwx8KbwNYP82sWgOr2GRh1bs-UGeD6ntPTr2awNLTaqsB6zBaEa2erE6_zU"/>
+<div class="overflow-hidden">
+<p class="font-title-md text-title-md text-white truncate">Alumno</p>
+<div class="flex items-center gap-xs text-on-primary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-sm" data-icon="account_circle">account_circle</span>
+<span class="text-body-sm truncate">Ver Perfil</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-sidebar-width flex-grow min-h-screen bg-surface-bright">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-lg py-sm border-b border-border-default sticky top-0 bg-surface-bright/80 backdrop-blur-md z-40">
+<div class="flex items-center gap-lg flex-grow">
+<div class="relative w-full max-w-xl group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="w-full pl-11 pr-md py-sm bg-surface-container-low border border-border-default rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-body-md transition-all" placeholder="Buscar equipos, herramientas o accesorios..." type="text" id="searchInput"/>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low border border-border-default px-md py-sm rounded-lg cursor-pointer hover:bg-surface-container transition-colors" id="categoriaFilter">
+<span class="material-symbols-outlined text-text-muted" data-icon="filter_list">filter_list</span>
+<span class="text-body-md font-medium text-text-main">Categor&iacute;as</span>
+</div>
+</div>
+<div class="flex items-center gap-md ml-lg">
+<button class="p-sm text-text-muted hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full border-2 border-surface-bright"></span>
+</button>
+<button class="p-sm text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<button class="p-sm text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-lg max-w-[1400px] mx-auto">
+<div class="mb-xl">
+<h2 class="font-display-lg text-display-lg text-text-main mb-xs">Cat&aacute;logo de Items</h2>
+<p class="text-text-muted font-body-md">Explora y solicita el equipo necesario para tus proyectos acad&eacute;micos.</p>
+</div>
+<!-- Item Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="itemsGrid">
+<div class="col-span-full text-center text-text-muted py-20">Cargando...</div>
+</div>
+</div>
+</main>
+<script>
+        const h = (s) => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+        const API = '/api/items';
 
-  <div class="modal" id="detailModal">
-    <div class="modal-content">
-      <h2 id="detailNombre"></h2>
-      <div id="detailBody"></div>
-      <div class="modal-actions">
-        <button class="btn" onclick="cerrarDetalle()">Cerrar</button>
-      </div>
-    </div>
-  </div>
+        async function verificarSesion() {
+          const res = await fetch('/api/auth/me');
+          const data = await res.json();
+          if (!data.success) window.location.href = '/login.html';
+        }
 
-  <script src="/js/usuario-catalogo.js"></script>
-</body>
-</html>
+        async function cargarCatalogo() {
+          const grid = document.getElementById('itemsGrid');
+          if (!grid) return;
+          grid.innerHTML = '<div class="col-span-full text-center text-text-muted py-20">Cargando...</div>';
+          const params = new URLSearchParams();
+          const q = document.getElementById('searchInput')?.value.trim();
+          if (q) params.set('busqueda', q);
+          try {
+            const res = await fetch(`${API}?${params}`);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message);
+            const items = data.data;
+            if (items.length === 0) {
+              grid.innerHTML = '<div class="col-span-full text-center text-text-muted py-20">No se encontraron \u00edtems</div>';
+              return;
+            }
+            grid.innerHTML = items.map(i => {
+              const disponible = i.cantidad > 0 && i.estado === 'disponible';
+              const fotoUrl = i.foto_url ? i.foto_url.replace(/[<>"'()]/g, '') : '';
+              const bgStyle = fotoUrl ? `background-image: url('${fotoUrl}')` : 'background-color: #f3f4f6';
+              const estadoLabel = h(i.estado?.replace('_', ' ') || 'No disponible');
+              const nombreEsc = h(i.nombre);
+              const categoriaEsc = h(i.categoria);
+              const codigoEsc = h(i.codigo_escaneable || '\u2014');
+              return `<div class="bg-white border border-border-default rounded-lg overflow-hidden card-hover flex flex-col shadow-sm">
+                <div class="h-48 bg-cover bg-center bg-surface-container-low" style="${bgStyle};"></div>
+                <div class="p-lg flex flex-col flex-grow">
+                  <div class="flex justify-between items-start mb-sm">
+                    <span class="px-sm py-1 bg-primary/10 text-primary font-label-md text-label-md rounded-full">${categoriaEsc}</span>
+                    <div class="flex items-center gap-xs px-sm py-1 ${disponible ? 'bg-success/10 text-success' : 'bg-tertiary-fixed/30 text-[#F59E0B]'} rounded-full">
+                      <span class="w-2 h-2 ${disponible ? 'bg-success' : 'bg-[#F59E0B]'} rounded-full"></span>
+                      <span class="font-label-md text-label-md uppercase">${disponible ? 'Disponible' : estadoLabel}</span>
+                    </div>
+                  </div>
+                  <h3 class="font-headline-md text-title-md text-text-main mb-xs">${nombreEsc}</h3>
+                  <p class="text-text-muted font-body-sm mb-lg">ID: ${codigoEsc}</p>
+                  <button class="mt-auto w-full py-md ${disponible ? 'bg-primary-container text-white hover:brightness-110' : 'bg-border-default text-text-muted cursor-not-allowed'} font-title-md rounded-lg active:scale-[0.98] transition-all flex items-center justify-center gap-sm" ${disponible ? `onclick="solicitarPrestamo(${i.id})"` : 'disabled'}>
+                    <span class="material-symbols-outlined text-lg">${disponible ? 'add_circle' : 'schedule'}</span>
+                    ${disponible ? 'Solicitar Pr\u00e9stamo' : 'No Disponible'}
+                  </button>
+                </div>
+              </div>`;
+            }).join('');
+          } catch (err) {
+            grid.innerHTML = `<div class="col-span-full text-center text-danger py-20">Error: ${h(err.message)}</div>`;
+          }
+        }
+
+        async function solicitarPrestamo(id) {
+          try {
+            const res = await fetch('/api/movimientos/retiro', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_item: id })
+            });
+            const data = await res.json();
+            if (data.success) {
+              alert('Pr\u00e9stamo registrado exitosamente');
+              await cargarCatalogo();
+            } else {
+              alert(data.message);
+            }
+          } catch { alert('Error de conexi\u00f3n'); }
+        }
+
+        async function cerrarSesion() {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          window.location.href = '/login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+          await verificarSesion();
+          await cargarCatalogo();
+          document.getElementById('searchInput')?.addEventListener('input', debounce(cargarCatalogo, 300));
+          const logoutBtns = document.querySelectorAll('[onclick="cerrarSesion()"]');
+          logoutBtns.forEach(b => b.addEventListener?.('click', cerrarSesion));
+        });
+
+        function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+        document.querySelectorAll('button:not([disabled])').forEach(btn => {
+          btn.addEventListener('click', function() { this.classList.add('scale-95'); setTimeout(() => this.classList.remove('scale-95'), 100); });
+        });
+    </script>
+</body></html>

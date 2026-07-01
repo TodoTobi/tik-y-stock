@@ -22,7 +22,10 @@ export async function devolucion(req, res, next) {
     const result = await devolucionItem(id_movimiento, req.session.usuario.id);
     res.json({ success: true, message: 'Devolución exitosa', data: result });
   } catch (err) {
-    if (['Movimiento no encontrado', 'Este movimiento ya fue devuelto', 'No puedes devolver un retiro de otro usuario'].includes(err.message)) {
+    if (err.message === 'No puedes devolver un retiro de otro usuario') {
+      return res.status(403).json({ success: false, message: err.message });
+    }
+    if (['Movimiento no encontrado', 'Este movimiento ya fue devuelto'].includes(err.message)) {
       return res.status(400).json({ success: false, message: err.message });
     }
     next(err);
@@ -40,6 +43,9 @@ export async function listarMovimientos(req, res, next) {
     if (req.query.tipo) { conditions.push('m.tipo = ?'); params.push(req.query.tipo); }
     if (req.query.id_item) { conditions.push('m.id_item = ?'); params.push(req.query.id_item); }
     if (req.query.id_usuario) { conditions.push('m.id_usuario = ?'); params.push(req.query.id_usuario); }
+    if (req.query.fecha_desde) { conditions.push('m.fecha_hora >= ?'); params.push(req.query.fecha_desde); }
+    if (req.query.fecha_hasta) { conditions.push('m.fecha_hora <= ?'); params.push(req.query.fecha_hasta + ' 23:59:59'); }
+    if (req.query.usuario) { conditions.push('u.nombre LIKE ?'); params.push('%' + req.query.usuario + '%'); }
     if (conditions.length > 0) sql += ' WHERE ' + conditions.join(' AND ');
     sql += ' ORDER BY m.fecha_hora DESC LIMIT 500';
     const [rows] = await pool.query(sql, params);
@@ -55,7 +61,7 @@ export async function misPrestamos(req, res, next) {
       `SELECT m.*, i.nombre as item_nombre
        FROM movimientos m
        JOIN items i ON m.id_item = i.id
-       WHERE m.id_usuario = ? AND m.tipo = 'retiro' AND m.devuelto = FALSE
+       WHERE m.id_usuario = ?
        ORDER BY m.fecha_hora DESC`,
       [req.session.usuario.id]
     );

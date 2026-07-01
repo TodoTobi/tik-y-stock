@@ -8,10 +8,15 @@ import movimientosRoutes from './routes/movimientos.routes.js';
 import alertasRoutes from './routes/alertas.routes.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url} - ${new Date().toISOString()}`);
+  next();
+});
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev_secret',
@@ -31,6 +36,10 @@ app.use('/api/items', itemsRoutes);
 app.use('/api/movimientos', movimientosRoutes);
 app.use('/api/alertas', alertasRoutes);
 
+app.get('/', (req, res) => {
+  res.redirect('/login.html');
+});
+
 app.get('/admin', (req, res) => {
   res.redirect('/admin/movimientos.html');
 });
@@ -41,8 +50,8 @@ app.use((err, req, res, next) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`TIC & Stock corriendo en http://0.0.0.0:${PORT}`);
+  app.listen(PORT, 'localhost', () => {
+    console.log(`TIC & Stock corriendo en http://localhost:${PORT}`);
   });
 }
 

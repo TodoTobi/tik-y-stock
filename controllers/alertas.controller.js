@@ -4,7 +4,7 @@ import { devolucionItem } from '../services/movimiento.service.js';
 export async function getAlertas(req, res, next) {
   try {
     const [rows] = await pool.query(
-      `SELECT m.id, m.fecha_hora, m.codigo_escaneado,
+      `SELECT m.id, m.tipo, m.fecha_hora, m.codigo_escaneado,
               i.nombre as item_nombre, i.codigo_escaneable as item_codigo,
               u.nombre as usuario_nombre, u.email as usuario_email
        FROM movimientos m
@@ -24,9 +24,12 @@ export async function resolverAlerta(req, res, next) {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) return res.status(400).json({ success: false, message: 'ID inválido' });
-    const result = await devolucionItem(id, req.session.usuario.id);
+    const result = await devolucionItem(id, req.session.usuario.id, true);
     res.json({ success: true, message: 'Alerta resuelta (devolución forzada)', data: result });
   } catch (err) {
+    if (err.message === 'No puedes devolver un retiro de otro usuario') {
+      return res.status(403).json({ success: false, message: err.message });
+    }
     if (['Movimiento no encontrado', 'Este movimiento ya fue devuelto'].includes(err.message)) {
       return res.status(400).json({ success: false, message: err.message });
     }

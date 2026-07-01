@@ -6,3 +6,4 @@ public/uploads/items/*
 *.log
 .DS_Store
 Thumbs.db
+opencode.json

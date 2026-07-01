@@ -1,26 +1,336 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Préstamos — TIC & Stock</title>
-  <link rel="stylesheet" href="/css/style.css">
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TIC y Stock - Mis Préstamos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "sidebar-bg": "#0F172A",
+        "primary": "#00288e",
+        "primary-container": "#1e40af",
+        "text-main": "#1E293B",
+        "text-muted": "#64748B",
+        "border-default": "#E2E8F0",
+        "surface": "#f7f9fb",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#f2f4f6",
+        "surface-bright": "#f7f9fb",
+        "success": "#10B981",
+        "danger": "#EF4444",
+        "info": "#3B82F6",
+        "error": "#ba1a1a",
+        "outline": "#757684",
+        "outline-variant": "#c4c5d5",
+        "on-surface": "#191c1e",
+        "on-surface-variant": "#444653",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#173bab",
+        "on-primary-fixed": "#001453"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: {
+        "sidebar-width": "260px", "container-max": "1280px",
+        "xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px", "gutter": "24px", "base": "4px"
+      },
+      fontFamily: {
+        "body-md": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Inter"],
+        "headline-lg": ["Inter"], "display-lg": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"]
+      },
+      fontSize: {
+        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+        "label-md": ["12px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+.sidebar-active { border-left: 4px solid #3B82F6; background-color: rgba(255, 255, 255, 0.05); color: #3B82F6; font-weight: 700; }
+.active-tab { color: #1e40af; border-bottom: 2px solid #1e40af; }
+</style>
 </head>
-<body>
-  <header>
-    <h1>TIC & Stock</h1>
-    <nav>
-      <a href="/usuario/catalogo.html">Catálogo</a>
-      <a href="/usuario/escaneo.html">Escanear</a>
-      <a href="/usuario/prestamos.html" class="active">Mis Préstamos</a>
-      <a href="#" id="logoutBtn">Cerrar sesión</a>
-    </nav>
-  </header>
-  <main>
-    <h2 style="margin-bottom:16px;">Mis Préstamos Activos</h2>
-    <div id="loading" class="loading"><div class="spinner"></div></div>
-    <div id="tableContainer"></div>
-  </main>
-  <script src="/js/usuario-prestamos.js"></script>
-</body>
-</html>
+<body class="flex min-h-screen text-on-surface">
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-sidebar-bg flex flex-col py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-white tracking-tight">Inventario Escolar</h1>
+<p class="text-body-sm text-on-primary-fixed-variant opacity-60">Gestión Académica</p>
+</div>
+<nav class="flex-grow space-y-xs">
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="catalogo.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Catálogo</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="escaneo.html">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-body-md text-body-md">Escanear</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md sidebar-active transition-colors duration-150" href="prestamos.html">
+<span class="material-symbols-outlined">handshake</span>
+<span class="font-body-md text-body-md">Mis Préstamos</span>
+</a>
+</nav>
+<div class="mt-auto px-lg pt-lg border-t border-white/10">
+<div class="flex items-center gap-md p-sm rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+<div class="overflow-hidden">
+<p class="font-title-md text-title-md text-white truncate">Alumno</p>
+<div class="flex items-center gap-xs text-on-primary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-sm" onclick="cerrarSesion()">logout</span>
+<span class="text-body-sm cursor-pointer hover:text-white transition-colors" onclick="cerrarSesion()">Cerrar Sesión</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-sidebar-width flex-grow min-h-screen bg-surface-bright">
+<header class="flex justify-between items-center w-full px-lg py-sm border-b border-border-default sticky top-0 bg-surface-bright/80 backdrop-blur-md z-40">
+<div class="flex items-center">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Mis Préstamos</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm">search</span>
+<input id="searchInput" class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-md focus:ring-2 focus:ring-primary/20 w-64" placeholder="Buscar equipo..." type="text"/>
+</div>
+<button class="p-sm text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="p-sm text-text-muted hover:text-primary transition-colors" onclick="cerrarSesion()">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</header>
+<div class="p-lg max-w-container-max mx-auto">
+<div class="max-w-container-max mx-auto animate-fade-in">
+<!-- Header Section -->
+<div class="mb-xl">
+<h1 class="font-display-lg text-display-lg text-text-main mb-xs">Mis Préstamos</h1>
+<p class="font-body-md text-body-md text-text-muted">Gestiona tus equipos activos y revisa tu historial</p>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-border-default mb-lg gap-xl">
+<button class="pb-3 font-title-md text-title-md active-tab transition-colors" id="tab-activos" onclick="switchTab('activos')">
+                    Activos
+                    <span id="activosCount" class="ml-2 px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">2</span>
+</button>
+<button class="pb-3 font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" id="tab-historial" onclick="switchTab('historial')">
+                    Historial
+                </button>
+</div>
+<!-- Activos Tab Content -->
+<div class="space-y-lg" id="content-activos">
+<!-- Data Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-default shadow-sm overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Item</th>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Fecha Retiro</th>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Vencimiento</th>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider text-right">Acciones</th>
+</tr>
+</thead>
+<tbody id="activosBody" class="divide-y divide-border-default">
+</tbody>
+</table>
+</div>
+<!-- Empty State Preview -->
+<div class="hidden flex-col items-center justify-center py-20 bg-surface-container-lowest rounded-xl border-2 border-dashed border-border-default" id="empty-state">
+<div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-4xl text-text-muted">inventory_2</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-text-main mb-xs">No tienes préstamos activos</h3>
+<p class="text-body-md text-text-muted mb-lg">Visita el catálogo para solicitar equipos para tus proyectos.</p>
+<button class="secondary-btn border border-border-default px-lg py-2 rounded-lg font-title-md hover:bg-surface-container transition-all" onclick="window.location.href='catalogo.html'">
+                        Ir al Catálogo
+                    </button>
+</div>
+</div>
+<!-- Historial Tab Content -->
+<div class="hidden space-y-lg" id="content-historial">
+<div class="bg-surface-container-lowest rounded-xl border border-border-default shadow-sm overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Item</th>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Fechas</th>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider">Estado</th>
+<th class="px-lg py-4 font-label-md text-label-md text-text-muted uppercase tracking-wider text-right">Detalles</th>
+</tr>
+</thead>
+<tbody id="historialBody" class="divide-y divide-border-default">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar for Mobile -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface border-t border-border-default lg:hidden shadow-xl rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container-high transition-transform scale-95 p-2" href="catalogo.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-[10px]">Catálogo</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container-high transition-transform scale-95 p-2" href="escaneo.html">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-label-md text-[10px]">Escanear</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 active:bg-surface-container-high transition-transform scale-95" href="prestamos.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment_return</span>
+<span class="font-label-md text-[10px]">Mis Préstamos</span>
+</a>
+</nav>
+<script>
+        const h = (s) => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+        async function verificarSesion() {
+          const res = await fetch('/api/auth/me');
+          const data = await res.json();
+          if (!data.success) window.location.href = '/login.html';
+        }
+
+        async function cargarPrestamos() {
+          const activosBody = document.getElementById('activosBody');
+          const historialBody = document.getElementById('historialBody');
+          const countBadge = document.getElementById('activosCount');
+          try {
+            const res = await fetch('/api/movimientos/mis-prestamos');
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message);
+            const prestamos = data.data;
+            const activos = prestamos.filter(p => p.tipo === 'retiro' && !p.devuelto);
+            if (countBadge) countBadge.textContent = activos.length;
+
+            if (activosBody) {
+              if (activos.length === 0) {
+                activosBody.innerHTML = '<tr><td colspan="4" class="px-lg py-4 text-center text-text-muted">No tienes préstamos activos</td></tr>';
+                const emptyState = document.getElementById('empty-state');
+                const table = document.querySelector('#content-activos .bg-surface-container-lowest');
+                if (emptyState && table) { table.classList.add('hidden'); emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
+              } else {
+                activosBody.innerHTML = activos.map(p => {
+                  const dias = Math.floor((Date.now() - new Date(p.fecha_hora)) / (1000*60*60*24));
+                  const vencimientoClass = dias > 7 ? 'text-danger bg-danger/10' : dias > 3 ? 'text-amber-700 bg-amber-500/10' : 'text-success bg-success/10';
+                  const vencimientoIcon = dias > 7 ? 'error' : dias > 3 ? 'warning' : 'check_circle';
+                  const vencimientoText = dias > 7 ? 'Vencido' : dias > 3 ? 'Por vencer' : 'En plazo';
+                  const itemNombreEsc = h(p.item_nombre);
+                  const codigoEsc = h(p.codigo_escaneado || '—');
+                  return `<tr class="hover:bg-surface-container-low transition-colors duration-150">
+            <td class="px-lg py-4"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0 border border-border-default flex items-center justify-center"><span class="material-symbols-outlined text-primary">inventory_2</span></div><div><p class="font-title-md text-title-md text-text-main">${itemNombreEsc}</p><p class="text-body-sm text-text-muted">SN: ${codigoEsc}</p></div></div></td>
+            <td class="px-lg py-4"><p class="font-body-md text-body-md">${new Date(p.fecha_hora).toLocaleDateString()}</p><p class="text-body-sm text-text-muted">${new Date(p.fecha_hora).toLocaleTimeString()}</p></td>
+            <td class="px-lg py-4"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px] ${vencimientoClass.split(' ')[0]}">${vencimientoIcon}</span><p class="font-body-md text-body-md ${vencimientoClass.split(' ')[0]}">${vencimientoText} (${dias}d)</p></div></td>
+            <td class="px-lg py-4 text-right"><button class="bg-primary-container text-white px-md py-2 rounded-lg font-title-md text-title-md hover:brightness-110 active:scale-95 transition-all shadow-sm" onclick="devolver(${p.id})">Devolver</button></td>
+          </tr>`;
+                }).join('');
+              }
+            }
+
+            if (historialBody) {
+              const historial = prestamos.filter(p => p.tipo === 'devolucion' || p.devuelto);
+              if (historial.length === 0) {
+                historialBody.innerHTML = '<tr><td colspan="4" class="px-lg py-4 text-center text-text-muted">Sin historial</td></tr>';
+              } else {
+                historialBody.innerHTML = historial.map(hist => {
+                  const estado = hist.devuelto ? 'Completado' : hist.tipo;
+                  const estadoClass = hist.devuelto ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700';
+                  const itemNombreEsc = h(hist.item_nombre);
+                  return `<tr class="hover:bg-surface-container-low transition-colors duration-150">
+            <td class="px-lg py-4"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-text-muted">inventory_2</span></div><p class="font-title-md text-title-md text-text-main">${itemNombreEsc}</p></div></td>
+            <td class="px-lg py-4"><p class="font-body-md text-body-md">${new Date(hist.fecha_hora).toLocaleDateString()}</p></td>
+            <td class="px-lg py-4"><span class="px-3 py-1 ${estadoClass} text-xs font-bold rounded-full">${estado}</span></td>
+            <td class="px-lg py-4 text-right"><button class="text-primary font-title-md hover:underline">Ver recibo</button></td>
+          </tr>`;
+                }).join('');
+              }
+            }
+          } catch {
+            if (activosBody) activosBody.innerHTML = '<tr><td colspan="4" class="px-lg py-4 text-center text-danger">Error al cargar</td></tr>';
+          }
+        }
+
+        async function devolver(id) {
+          try {
+            const res = await fetch('/api/movimientos/devolucion', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_movimiento: id })
+            });
+            const data = await res.json();
+            if (data.success) { await cargarPrestamos(); }
+            else alert(data.message);
+          } catch { alert('Error de conexión'); }
+        }
+
+        async function cerrarSesion() {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          window.location.href = '/login.html';
+        }
+
+        function switchTab(tab) {
+            const activosBtn = document.getElementById('tab-activos');
+            const historialBtn = document.getElementById('tab-historial');
+            const activosContent = document.getElementById('content-activos');
+            const historialContent = document.getElementById('content-historial');
+
+            if (tab === 'activos') {
+                activosBtn.classList.add('active-tab');
+                activosBtn.classList.remove('text-on-surface-variant');
+                historialBtn.classList.remove('active-tab');
+                historialBtn.classList.add('text-on-surface-variant');
+                
+                activosContent.classList.remove('hidden');
+                historialContent.classList.add('hidden');
+            } else {
+                historialBtn.classList.add('active-tab');
+                historialBtn.classList.remove('text-on-surface-variant');
+                activosBtn.classList.remove('active-tab');
+                activosBtn.classList.add('text-on-surface-variant');
+
+                historialContent.classList.remove('hidden');
+                activosContent.classList.add('hidden');
+            }
+        }
+
+        function toggleEmptyState(isEmpty) {
+            const table = document.querySelector('#content-activos .bg-surface-container-lowest');
+            const emptyState = document.getElementById('empty-state');
+            if (isEmpty) {
+                table.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                table.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+        }
+
+        function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+          await verificarSesion();
+          await cargarPrestamos();
+          document.getElementById('searchInput')?.addEventListener('input', debounce(() => {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('#content-activos tbody tr, #content-historial tbody tr').forEach(tr => {
+              tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+          }, 300));
+        });
+    </script>
+</body></html>

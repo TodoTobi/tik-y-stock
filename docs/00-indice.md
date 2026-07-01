@@ -36,7 +36,7 @@
 
 ## Enlaces rápidos del sistema
 
-- `http://localhost:3000/login.html` — Login
-- `http://localhost:3000/admin/movimientos.html` — Panel superusuario (redirección desde /admin)
-- `http://localhost:3000/usuario/catalogo.html` — Catálogo alumno
-- `http://localhost:3000/usuario/escaneo.html` — Escaneo QR
+- `http://localhost:4000/login.html` — Login
+- `http://localhost:4000/admin/movimientos.html` — Panel superusuario (redirección desde /admin)
+- `http://localhost:4000/usuario/catalogo.html` — Catálogo alumno
+- `http://localhost:4000/usuario/escaneo.html` — Escaneo QR

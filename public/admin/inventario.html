@@ -1,70 +1,417 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventario — TIC & Stock</title>
-  <link rel="stylesheet" href="/css/style.css">
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TIC y Stock - Inventario</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+darkMode: "class",
+theme: { extend: {
+colors: {
+"sidebar-bg": "#0F172A", "primary": "#00288e", "primary-container": "#1e40af",
+"text-main": "#1E293B", "text-muted": "#64748B", "border-default": "#E2E8F0",
+"surface": "#f7f9fb", "surface-container-lowest": "#ffffff",
+"surface-container-low": "#f2f4f6", "surface-bright": "#f7f9fb",
+"success": "#10B981", "danger": "#EF4444", "info": "#3B82F6", "error": "#ba1a1a",
+"outline": "#757684", "outline-variant": "#c4c5d5",
+"on-surface": "#191c1e", "on-surface-variant": "#444653",
+"on-primary": "#ffffff", "on-primary-fixed-variant": "#173bab", "on-primary-fixed": "#001453"
+},
+borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+spacing: {
+"sidebar-width": "260px", "container-max": "1280px",
+"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px", "gutter": "24px", "base": "4px"
+},
+fontFamily: {
+"body-md": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Inter"],
+"headline-lg": ["Inter"], "display-lg": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"]
+},
+fontSize: {
+"display-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}],
+"headline-lg": ["24px", {lineHeight: "32px", fontWeight: "700"}],
+"headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}],
+"title-md": ["16px", {lineHeight: "24px", fontWeight: "500"}],
+"body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}],
+"body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}],
+"label-md": ["12px", {lineHeight: "12px", letterSpacing: "0.05em", fontWeight: "600"}]
+}
+} }
+}
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+.sidebar-active { border-left: 4px solid #3B82F6; background-color: rgba(255, 255, 255, 0.05); color: #3B82F6; font-weight: 700; }
+.modal-overlay { transition: opacity 0.2s ease-in-out; }
+.scale-98:active { transform: scale(0.98); }
+</style>
 </head>
-<body>
-  <header>
-    <h1>TIC & Stock</h1>
-    <nav>
-      <a href="/admin/inventario.html" class="active">Inventario</a>
-      <a href="/admin/movimientos.html">Movimientos</a>
-      <a href="/admin/alertas.html">Alertas</a>
-      <a href="#" id="logoutBtn">Cerrar sesión</a>
-    </nav>
-  </header>
-  <main>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <h2>Inventario</h2>
-      <button class="btn btn-primary" onclick="abrirModal()">+ Nuevo ítem</button>
-    </div>
-    <div class="filters">
-      <input type="text" id="searchInput" placeholder="Buscar nombre o código..." oninput="cargarItems()">
-      <select id="categoriaFilter" onchange="cargarItems()"><option value="">Todas las categorías</option></select>
-      <select id="estadoFilter" onchange="cargarItems()">
-        <option value="">Todos los estados</option>
-        <option value="disponible">Disponible</option>
-        <option value="en_uso">En uso</option>
-        <option value="dañado">Dañado</option>
-        <option value="de_baja">De baja</option>
-      </select>
-    </div>
-    <div id="loading" class="loading"><div class="spinner"></div></div>
-    <div id="tableContainer"></div>
-  </main>
+<body class="flex min-h-screen text-on-surface">
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-sidebar-bg flex flex-col py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-white tracking-tight">TIC y Stock</h1>
+<p class="text-body-sm text-on-primary-fixed-variant opacity-60">Admin TIC</p>
+</div>
+<nav class="flex-grow space-y-xs">
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="dashboard.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md sidebar-active transition-colors duration-150" href="inventario.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Inventario</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="movimientos.html">
+<span class="material-symbols-outlined">swap_horiz</span>
+<span class="font-body-md text-body-md">Movimientos</span>
+</a>
+<a class="flex items-center gap-md px-lg py-md text-on-primary-fixed-variant opacity-80 hover:bg-white/10 hover:text-white transition-colors duration-150" href="alertas.html">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-body-md text-body-md">Alertas</span>
+</a>
+</nav>
+<div class="mt-auto px-lg pt-lg border-t border-white/10">
+<button class="w-full bg-primary-container text-white py-sm rounded-lg mb-lg font-title-md flex items-center justify-center gap-xs hover:brightness-110 transition-all" onclick="abrirModal()">
+<span class="material-symbols-outlined">add</span> Nuevo Item
+</button>
+<div class="flex items-center gap-md p-sm rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-info">admin_panel_settings</span>
+</div>
+<div class="overflow-hidden flex-1">
+<p class="font-title-md text-title-md text-white truncate">Superusuario</p>
+<div class="flex items-center gap-xs text-on-primary-fixed-variant opacity-70">
+<span class="material-symbols-outlined text-sm" onclick="cerrarSesion()">logout</span>
+<span class="text-body-sm cursor-pointer hover:text-white transition-colors" onclick="cerrarSesion()">Cerrar Sesión</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-sidebar-width flex-grow min-h-screen bg-surface-bright">
+<header class="flex justify-between items-center w-full px-lg py-sm border-b border-border-default sticky top-0 bg-surface-bright/80 backdrop-blur-md z-40">
+<div class="flex items-center gap-sm">
+<span class="text-text-muted text-body-md">Gestión</span>
+<span class="material-symbols-outlined text-text-muted text-[16px]">chevron_right</span>
+<span class="text-primary font-bold text-body-md">Inventario</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-text-muted hover:text-primary transition-colors" onclick="cerrarSesion()">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</header>
+<div class="p-lg flex-1">
+<div class="max-w-container-max mx-auto">
+<!-- Page Header -->
+<div class="flex justify-between items-center mb-xl">
+<div>
+<h2 class="text-display-lg font-display-lg text-text-main">Inventario</h2>
+<p class="text-text-muted text-body-md font-body-md">Gestiona y monitorea los activos tecnológicos de la institución.</p>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-lg py-sm rounded-lg font-semibold flex items-center gap-sm transition-all shadow-sm scale-98" onclick="abrirModal()">
+<span class="material-symbols-outlined">add_circle</span>
+                        Nuevo Item
+                    </button>
+</div>
+<!-- Filters Bar -->
+<div class="bg-surface-container-lowest border border-border-default rounded-xl p-md mb-lg flex flex-wrap gap-md items-center shadow-sm">
+<div class="flex-1 min-w-[300px] relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input id="searchInput" class="w-full pl-10 pr-lg py-2 border border-border-default rounded-lg bg-surface text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Buscar por nombre, código o serie..." type="text"/>
+</div>
+<div class="flex gap-md">
+<select id="categoriaFilter" class="border border-border-default rounded-lg bg-surface px-md py-2 text-body-md text-text-main focus:ring-primary/20 focus:border-primary outline-none min-w-[160px]">
+<option value="">Categoría</option>
+</select>
+<select id="estadoFilter" class="border border-border-default rounded-lg bg-surface px-md py-2 text-body-md text-text-main focus:ring-primary/20 focus:border-primary outline-none min-w-[160px]">
+<option value="">Estado</option>
+<option value="disponible">Disponible</option>
+<option value="en_uso">En Uso</option>
+<option value="mantenimiento">Mantenimiento</option>
+</select>
+<button class="border border-border-default bg-surface hover:bg-surface-container-low px-md py-2 rounded-lg text-body-md font-semibold text-text-main flex items-center gap-xs transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+                            Más Filtros
+                        </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest border border-border-default rounded-xl shadow-sm overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-border-default">
+<tr>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider w-20 text-center">QR</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Nombre</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Categoría</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Estado</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Ubicación</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider text-right">Acciones</th>
+</tr>
+</thead>
+<tbody id="itemsBody" class="divide-y divide-border-default">
+<tr><td colspan="6" class="px-lg py-md text-center text-text-muted">Cargando...</td></tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-lg py-md border-t border-border-default flex items-center justify-between">
+<span class="text-body-sm text-text-muted">Mostrando 1 a 10 de 156 items</span>
+<div class="flex gap-xs">
+<button class="p-2 border border-border-default rounded hover:bg-surface-container-low transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-white text-body-sm font-bold rounded">1</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-low text-body-sm rounded transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-low text-body-sm rounded transition-colors">3</button>
+<button class="p-2 border border-border-default rounded hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<footer class="bg-surface-container-low border-t border-border-default py-md px-lg flex justify-between items-center w-full">
+<span class="text-label-md text-text-muted">© 2026 TIC y Stock - Sistema de Gestión Institucional</span>
+<div class="flex gap-lg">
+<a class="text-label-md text-text-muted hover:text-primary transition-colors" href="#">Soporte Técnico</a>
+<a class="text-label-md text-text-muted hover:text-primary transition-colors" href="#">Manual de Usuario</a>
+<a class="text-label-md text-text-muted hover:text-primary transition-colors" href="#">Políticas de Seguridad</a>
+</div>
+</footer>
+</div>
+</main>
+<!-- Modal: Nuevo/Editar Item -->
+<div class="fixed inset-0 z-50 hidden" id="modal-item">
+<div class="absolute inset-0 bg-sidebar-bg/60 backdrop-blur-sm modal-overlay"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
+<div class="px-lg py-md border-b border-border-default flex justify-between items-center">
+<h3 class="text-headline-md font-headline-md text-text-main">Gestión de Item</h3>
+<button class="p-1 hover:bg-surface-container-low rounded-full transition-colors" onclick="toggleModal('modal-item')">
+<span class="material-symbols-outlined text-outline">close</span>
+</button>
+</div>
+<form class="p-lg space-y-lg">
+<input type="hidden" id="itemId"/>
+<div class="grid grid-cols-2 gap-lg">
+<div class="col-span-2">
+<label class="block text-label-md font-label-md text-text-muted mb-xs">Nombre del Activo</label>
+<input id="nombre" class="w-full px-md py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" placeholder="Ej. Laptop Dell Latitude 5420" type="text"/>
+</div>
+<div class="col-span-1">
+<label class="block text-label-md font-label-md text-text-muted mb-xs">Categoría</label>
+<select id="categoria" class="w-full px-md py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+<option value="">Seleccionar categoría</option>
+<option value="Computación">Computación</option>
+<option value="Multimedia">Multimedia</option>
+<option value="Redes">Redes</option>
+<option value="Periféricos">Periféricos</option>
+</select>
+</div>
+    <div class="col-span-1">
+<label class="block text-label-md font-label-md text-text-muted mb-xs">Código Escaneable</label>
+<input id="codigo_escaneable" class="w-full px-md py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" placeholder="Ej. TIC-0021" type="text"/>
+</div>
+<div class="col-span-1">
+<label class="block text-label-md font-label-md text-text-muted mb-xs">Estado Inicial</label>
+<select id="estado" class="w-full px-md py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+<option value="disponible">Disponible</option>
+<option value="en_uso">En Uso</option>
+<option value="mantenimiento">Mantenimiento</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="block text-label-md font-label-md text-text-muted mb-xs">Ubicación</label>
+<input id="ubicacion" class="w-full px-md py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" placeholder="Ej. Laboratorio 2, Gabinete B" type="text"/>
+</div>
+<div class="col-span-2">
+<label class="block text-label-md font-label-md text-text-muted mb-xs">Descripción / Notas</label>
+<textarea id="observaciones" class="w-full px-md py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none" placeholder="Detalles técnicos, accesorios incluidos, etc." rows="3"></textarea>
+</div>
+</div>
+</form>
+<div class="px-lg py-md bg-surface-container-low border-t border-border-default flex justify-end gap-md">
+<button class="px-lg py-2 rounded-lg text-text-muted font-semibold hover:bg-surface-container-high transition-colors" onclick="toggleModal('modal-item')">Cancelar</button>
+<button class="bg-primary px-xl py-2 rounded-lg text-white font-semibold shadow-sm hover:bg-primary/90 transition-all scale-98" onclick="guardarItem()">Guardar Item</button>
+</div>
+</div>
+</div>
+<!-- Modal: Confirmar Eliminación -->
+<div class="fixed inset-0 z-50 hidden" id="modal-confirm">
+<div class="absolute inset-0 bg-sidebar-bg/60 backdrop-blur-sm modal-overlay"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden">
+<div class="p-xl text-center">
+<div class="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-lg">
+<span class="material-symbols-outlined text-danger text-[40px]">warning</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-text-main mb-sm">¿Confirmar Eliminación?</h3>
+<p class="text-body-md text-text-muted mb-xl">Esta acción no se puede deshacer. Se eliminarán permanentemente todos los registros asociados a este item del inventario.</p>
+<div class="flex gap-md">
+<button class="flex-1 px-lg py-2 border border-border-default rounded-lg text-text-muted font-semibold hover:bg-surface-container-low transition-colors" onclick="toggleModal('modal-confirm')">Cancelar</button>
+<button class="flex-1 px-lg py-2 bg-danger rounded-lg text-white font-semibold shadow-sm hover:bg-danger/90 transition-all scale-98" onclick="confirmarEliminar()">Eliminar</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
 
-  <div class="modal" id="itemModal">
-    <div class="modal-content">
-      <h2 id="modalTitle">Nuevo ítem</h2>
-      <form id="itemForm">
-        <input type="hidden" id="itemId">
-        <div class="form-group"><label>Nombre</label><input type="text" id="nombre" required></div>
-        <div class="form-group"><label>Categoría</label><input type="text" id="categoria" required></div>
-        <div class="form-group"><label>Cantidad</label><input type="number" id="cantidad" min="0" value="1"></div>
-        <div class="form-group"><label>Código escaneable</label><input type="text" id="codigo_escaneable" required></div>
-        <div class="form-group"><label>Ubicación</label><input type="text" id="ubicacion"></div>
-        <div class="form-group"><label>Estado</label>
-          <select id="estado">
-            <option value="disponible">Disponible</option>
-            <option value="en_uso">En uso</option>
-            <option value="dañado">Dañado</option>
-            <option value="de_baja">De baja</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Observaciones</label><textarea id="observaciones" rows="3"></textarea></div>
-        <div class="form-group"><label>Foto</label><input type="file" id="foto" accept="image/jpeg,image/png,image/webp"></div>
-        <div id="formError" class="error-msg" style="display:none;color:#dc2626;font-size:14px;margin-bottom:8px;"></div>
-        <div class="modal-actions">
-          <button type="button" class="btn" onclick="cerrarModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" id="saveBtn">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                ['modal-item', 'modal-confirm'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && !el.classList.contains('hidden')) toggleModal(id);
+                });
+            }
+        });
 
-  <script src="/js/admin-inventario.js"></script>
-</body>
-</html>
+        const h = (s) => { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; };
+        const API = '/api/items';
+        let editingId = null;
+        let deleteId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await verificarSesion();
+            await cargarItems();
+            await cargarCategorias();
+            document.querySelectorAll('[onclick*="toggleModal"]').forEach(el => el.removeAttribute('onclick'));
+            document.querySelector('[onclick="abrirModal()"]')?.addEventListener('click', () => abrirModal(null));
+            document.getElementById('searchInput')?.addEventListener('input', debounce(cargarItems, 300));
+            document.getElementById('categoriaFilter')?.addEventListener('change', cargarItems);
+            document.getElementById('estadoFilter')?.addEventListener('change', cargarItems);
+            const logoutBtn = document.querySelector('[onclick*="logout"]') || document.querySelector('[href*="logout"]');
+            if (logoutBtn) logoutBtn.addEventListener('click', cerrarSesion);
+        });
+
+        function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+        async function verificarSesion() {
+            const res = await fetch('/api/auth/me');
+            const data = await res.json();
+            if (!data.success || data.data.rol !== 'superusuario') window.location.href = '/login.html';
+        }
+
+        async function cargarItems() {
+            const tbody = document.getElementById('itemsBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-lg py-md text-center text-text-muted">Cargando...</td></tr>';
+            const params = new URLSearchParams();
+            const q = document.getElementById('searchInput')?.value.trim();
+            if (q) params.set('busqueda', q);
+            const cat = document.getElementById('categoriaFilter')?.value;
+            if (cat) params.set('categoria', cat);
+            const est = document.getElementById('estadoFilter')?.value;
+            if (est) params.set('estado', est);
+            try {
+                const res = await fetch(`${API}?${params}`);
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message);
+                const items = data.data;
+                if (items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-lg py-md text-center text-text-muted">No hay ítems registrados</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = items.map(i => {
+                    const estadoClass = i.estado === 'disponible' ? 'bg-success/10 text-success' : i.estado === 'en_uso' ? 'bg-amber-500/10 text-amber-600' : 'bg-outline/10 text-outline-variant';
+                    const estadoLabel = h(i.estado?.replace('_', ' '));
+                    return `<tr class="hover:bg-surface-container/30 transition-colors group">
+                        <td class="px-lg py-md text-center"><button class="p-1 hover:bg-primary/10 rounded-md transition-colors text-primary"><span class="material-symbols-outlined">qr_code_2</span></button></td>
+                        <td class="px-lg py-md"><div class="font-semibold text-text-main text-body-md">${h(i.nombre)}</div><div class="text-body-sm text-text-muted">SN: ${h(i.codigo_escaneable || '—')}</div></td>
+                        <td class="px-lg py-md text-body-md text-text-main">${h(i.categoria)}</td>
+                        <td class="px-lg py-md"><span class="px-3 py-1 rounded-full ${estadoClass} text-[11px] font-bold uppercase tracking-tight">${estadoLabel}</span></td>
+                        <td class="px-lg py-md text-body-md text-text-main">${h(i.ubicacion || '—')}</td>
+                        <td class="px-lg py-md text-right"><div class="flex justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="p-2 text-outline hover:text-primary hover:bg-primary/5 rounded-lg transition-all" onclick="editarItem(${i.id})"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                            <button class="p-2 text-outline hover:text-danger hover:bg-danger/5 rounded-lg transition-all" onclick="eliminarItem(${i.id})"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                        </div></td>
+                    </tr>`;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-lg py-md text-center text-danger">Error: ${h(err.message)}</td></tr>`;
+            }
+        }
+
+        async function cargarCategorias() {
+            try {
+                const res = await fetch(`${API}?`);
+                const data = await res.json();
+                if (!data.success) return;
+                const cats = [...new Set(data.data.map(i => i.categoria))].sort();
+                const select = document.getElementById('categoriaFilter');
+                if (select) cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; select.appendChild(o); });
+            } catch {}
+        }
+
+        function abrirModal(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modal-item').querySelector('h3').textContent = item ? 'Editar Item' : 'Nuevo Item';
+            document.getElementById('nombre').value = item ? item.nombre : '';
+            document.getElementById('categoria').value = item ? item.categoria : '';
+            document.getElementById('estado').value = item ? item.estado : 'disponible';
+            document.getElementById('ubicacion').value = item ? (item.ubicacion || '') : '';
+            document.getElementById('codigo_escaneable').value = item ? (item.codigo_escaneable || '') : '';
+            document.getElementById('observaciones').value = item ? (item.observaciones || '') : '';
+            toggleModal('modal-item');
+        }
+
+        async function editarItem(id) {
+            try {
+                const res = await fetch(`${API}/${id}`);
+                const data = await res.json();
+                if (data.success) abrirModal(data.data);
+            } catch {}
+        }
+
+        async function eliminarItem(id) {
+            deleteId = id;
+            toggleModal('modal-confirm');
+        }
+
+        async function confirmarEliminar() {
+            if (!deleteId) return;
+            try {
+                const res = await fetch(`${API}/${deleteId}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) { toggleModal('modal-confirm'); deleteId = null; await cargarItems(); }
+                else alert(h(data.message));
+            } catch { alert('Error de conexión'); }
+        }
+
+        async function guardarItem() {
+            const nombre = document.getElementById('nombre').value.trim();
+            if (!nombre) { alert('El nombre es obligatorio'); return; }
+            const body = {
+                nombre,
+                categoria: document.getElementById('categoria').value,
+                codigo_escaneable: document.getElementById('codigo_escaneable').value.trim(),
+                estado: document.getElementById('estado').value,
+                ubicacion: document.getElementById('ubicacion').value,
+                observaciones: document.getElementById('observaciones').value
+            };
+            try {
+                const res = await fetch(editingId ? `${API}/${editingId}` : API, {
+                    method: editingId ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (data.success) { toggleModal('modal-item'); await cargarItems(); }
+                else alert(data.message);
+            } catch { alert('Error de conexión'); }
+        }
+
+        async function cerrarSesion() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login.html';
+        }
+    </script>
+</body></html>
